@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewData["Title"] = "Авторизация";
+}
+
+@model Authorization
+<form method="post" align="center">
+    <p>Введите логин</p>
+    <input type="text" name="Login" />
+    <p>Введите пароль</p>
+    <input type="password" name="Password" />
+    <br />
+    <br />
+    <input type="submit" value="Отправить" />
+    <br />
+    <br />
+    @Html.ActionLink("Всё еще не зарегистрированы???", "Registration")
+</form>

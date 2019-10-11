@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "qWERTyShop";
+}
+<p>
+
+</p>
+<p align="right">
+    @Html.ActionLink("Авторизация", "AuthorizationPage")
+</p>
+
+<p align="right">
+    @Html.ActionLink("Удалить данные", "DeleteData")
+</p>
+@foreach(var element in ViewBag.Data)
+{
+    <p>@element</p>
+}
+
+
+
+
