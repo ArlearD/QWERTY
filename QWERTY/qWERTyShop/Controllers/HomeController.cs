@@ -44,15 +44,17 @@ namespace qWERTyShop.Controllers
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                using (NpgsqlCommand command = new NpgsqlCommand("SELECT(Login, Password) FROM public.users", connection))
+                using (NpgsqlCommand command = new NpgsqlCommand("SELECT Login, Password FROM public.users;", connection))
                 {
-                    using (var reader = command.ExecuteReader())
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            var expectedLogin = reader.GetString(0); //НЕ КАСТИТСЯ 
-                            var expectedPassword = reader.GetString(1); //НЕ КАСТИТСЯ
-                            if (expectedLogin == authorization.Login && expectedPassword == authorization.Password)
+                            var exceptedLogin = reader.GetString(0);
+                            var exceptedPassword = reader.GetString(1);
+
+                            if (authorization.Login == exceptedLogin && authorization.Password == exceptedPassword)
                             {
                                 connection.Close();
                                 return "Удачно!";
@@ -72,34 +74,31 @@ namespace qWERTyShop.Controllers
         }
 
         [HttpPost]
-        public string Registration(Registration registration)
+        public IActionResult Registration([Bind("Login", "Password", "RePassword")]Registration registration)
         {
-            registration.RegistrationDate = DateTime.Now;
-            registration.Flag = "common";
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            ViewBag.Message = "";
+            if (ModelState.IsValid)
             {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.users(Login, Password, Flag, RegistrationTime) VALUES (@l, @p, @f, @r)", connection);
-                command.Parameters.AddWithValue("l", registration.Login);
-                command.Parameters.AddWithValue("p", registration.Password);
-                command.Parameters.AddWithValue("f", registration.Flag);
-                command.Parameters.AddWithValue("r", registration.RegistrationDate);
-                command.ExecuteNonQuery();
-                connection.Close();
+                registration.RegistrationDate = DateTime.Now;
+                registration.Flag = "common";
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.users(Login, Password, Flag, RegistrationTime) VALUES (@l, @p, @f, @r)", connection);
+                    command.Parameters.AddWithValue("l", registration.Login);
+                    command.Parameters.AddWithValue("p", registration.Password);
+                    command.Parameters.AddWithValue("f", registration.Flag);
+                    command.Parameters.AddWithValue("r", registration.RegistrationDate);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                    return RedirectToAction("RegistrationConfirm");
+                }
             }
-            return "Спасибо за регистрацию!";
+            return View(registration);
         }
 
-        public IActionResult GetMoreData()
+        public IActionResult RegistrationConfirm()
         {
-            //string connStr = "Server=postgr.postgres.database.azure.com; Port=5432; Database=postgres; User Id=postgres@postgr; Password=1234QWER+";
-            //using (NpgsqlConnection connection = new NpgsqlConnection(connStr))
-            //{
-            //    connection.Open();
-            //    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.users(login, password) VALUES('serega322', '12345678')", connection);
-            //    command.ExecuteNonQuery();
-            //    connection.Close();
-            //}
             return View();
         }
 

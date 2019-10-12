@@ -72,3 +72,4 @@ C:\Users\Igor\source\repos\qwertyshop\QWERTY\QWERTY\qWERTyShop\obj\Debug\netcore
 C:\Users\Igor\source\repos\qwertyshop\QWERTY\QWERTY\qWERTyShop\obj\Debug\netcoreapp2.1\qWERTyShop.RazorTargetAssemblyInfo.cs
 C:\Users\Igor\source\repos\qwertyshop\QWERTY\QWERTY\qWERTyShop\obj\Debug\netcoreapp2.1\qWERTyShop.Views.pdb
 C:\Users\Igor\source\repos\qwertyshop\QWERTY\QWERTY\qWERTyShop\obj\Debug\netcoreapp2.1\qWERTyShop.csproj.CopyComplete
+C:\Users\Игорь\source\repos\qWERTyShop\qWERTyShop\obj\Debug\netcoreapp2.1\Razor\Views\Home\RegistrationConfirm.g.cshtml.cs
