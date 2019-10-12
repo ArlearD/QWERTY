@@ -12,11 +12,11 @@ namespace qWERTyShop.Controllers
 {
     public class HomeController : Controller
     {
+        string connectionString = "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
         public IActionResult Index()
         {
             List<string> Data;
-            string connStr = "Server=postgr.postgres.database.azure.com; Port=5432; Database=postgres; User Id=postgres@postgr; Password=1234QWER+";
-            using (NpgsqlConnection connection = new NpgsqlConnection(connStr))
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
                 NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.users", connection);
@@ -41,8 +41,7 @@ namespace qWERTyShop.Controllers
         [HttpPost]
         public string AuthorizationPage(Authorization authorization)
         {
-            string connStr = "Server=postgr.postgres.database.azure.com; Port=5432; Database=postgres; User Id=postgres@postgr; Password=1234QWER+";
-            using (var connection = new NpgsqlConnection(connStr))
+            using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
                 using (NpgsqlCommand command = new NpgsqlCommand("SELECT(Login, Password) FROM public.users", connection))
@@ -77,8 +76,7 @@ namespace qWERTyShop.Controllers
         {
             registration.RegistrationDate = DateTime.Now;
             registration.Flag = "common";
-            string connStr = "Server=postgr.postgres.database.azure.com; Port=5432; Database=postgres; User Id=postgres@postgr; Password=1234QWER+";
-            using (NpgsqlConnection connection = new NpgsqlConnection(connStr))
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
                 NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.users(Login, Password, Flag, RegistrationTime) VALUES (@l, @p, @f, @r)", connection);
@@ -107,8 +105,7 @@ namespace qWERTyShop.Controllers
 
         public IActionResult DeleteData()
         {
-            string connStr = "Server=postgr.postgres.database.azure.com; Port=5432; Database=postgres; User Id=postgres@postgr; Password=1234QWER+";
-            using (NpgsqlConnection connection = new NpgsqlConnection(connStr))
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
                 NpgsqlCommand command = new NpgsqlCommand("DELETE FROM public.users WHERE ID=(SELECT MAX(id) FROM users)", connection);
