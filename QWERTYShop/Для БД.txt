@@ -1,0 +1,10 @@
+create table public.cards
+(
+    Id bigint,
+    Name text,
+    Type text,
+    AddedTime timestamp,
+    Image text,
+    Information text,
+    Cost int
+)

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Owin;
 using Owin;
+using QWERTYShop.Models;
+using System.Data.Entity;
 
 [assembly: OwinStartupAttribute(typeof(QWERTYShop.Startup))]
 namespace QWERTYShop

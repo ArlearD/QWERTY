@@ -1,0 +1,12 @@
+﻿@model string
+<h3 align="center">Представление базы данных</h3>
+
+<form method="post" align ="right"> <input type="submit" value="Удалить последнюю запись" name="s" /> </form>
+
+<p align="right"> @Html.ActionLink("Вернуться к добавлению", "Index", "Managment") </p>
+
+@foreach (var element in ViewBag.Data)
+{
+    <p align="center"> @element</p>
+}
+

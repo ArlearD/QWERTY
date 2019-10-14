@@ -108,6 +108,7 @@ namespace QWERTYShop.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    UserManager.AddToRole(user.Id, "user");
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
