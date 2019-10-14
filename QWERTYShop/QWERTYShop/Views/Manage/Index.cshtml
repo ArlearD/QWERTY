@@ -1,0 +1,12 @@
+﻿@model QWERTYShop.Models.IndexViewModel
+@{
+    ViewBag.Title = "Личный кабинет";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Изменение параметров учетной записи</h4>
+    @Html.ActionLink("Сменить пароль", "ChangePassword")
+</div>

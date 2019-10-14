@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QWERTYShop", "QWERTYShop\QWERTYShop.csproj", "{06A02A30-02AE-4CC1-A9A9-0C3718CC59F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06A02A30-02AE-4CC1-A9A9-0C3718CC59F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06A02A30-02AE-4CC1-A9A9-0C3718CC59F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06A02A30-02AE-4CC1-A9A9-0C3718CC59F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06A02A30-02AE-4CC1-A9A9-0C3718CC59F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FCF9B39A-7B9E-48B9-A25C-504BE96775D5}
+	EndGlobalSection
+EndGlobal
