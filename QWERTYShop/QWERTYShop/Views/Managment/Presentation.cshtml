@@ -1,7 +1,13 @@
-﻿@model string
+﻿@model QWERTYShop.Models.ManagmentSortModels
 <h3 align="center">Представление базы данных</h3>
 
-<form method="post" align ="right"> <input type="submit" value="Удалить последнюю запись" name="s" /> </form>
+<form method="post" align ="left"> <input type="submit" value="Удалить последнюю запись" name="Delete" /> </form>
+<form method="post" align="left">
+    <p>Сортировка по:</p>
+    <input type="submit" value="ID" name="Id" />
+    <input type="submit" value="Type" name="Type" />
+    <input type="submit" value="Name" name="Name" />
+</form>
 
 <p align="right"> @Html.ActionLink("Вернуться к добавлению", "Index", "Managment") </p>
 

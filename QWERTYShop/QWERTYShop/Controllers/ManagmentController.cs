@@ -81,8 +81,18 @@ namespace QWERTYShop.Controllers
         }
 
         [HttpPost]
-        public ActionResult Presentation(string s)
+        public ActionResult Presentation(ManagmentSortModels model)
         {
+            string currentModel;
+            if (model.Id != null) currentModel = model.Id;
+            if (model.Type != null) currentModel = model.Type;
+            if (model.Remove != null) currentModel = model.Remove;
+            if (model.Name != null) currentModel = model.Name;
+            else currentModel = null;
+            bool IsDescending = false;
+            string previousCommand = currentModel;
+            if (currentModel == "delete")
+            {
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
@@ -108,6 +118,41 @@ namespace QWERTYShop.Controllers
             }
             ViewBag.Data = Data;
             Data = null;
+            return View();
+            } //удаление последней строки
+
+            if (currentModel == "id")
+            {
+                List<string> Data = new List<string>();
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
+                    NpgsqlDataReader dataReader = command.ExecuteReader();
+                    for (int i = 0; dataReader.Read(); i++)
+                    {
+                        Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                            dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                            + " cost: " + dataReader[6].ToString() + "\r\n");
+                    }
+                    if (previousCommand == "id"&&IsDescending==false)
+                    {
+                        Data=Data
+                        .OrderByDescending(x => x[0])
+                        .ToList();
+                        IsDescending = true;
+                    }
+                    else
+                    {
+                        Data=Data
+                       .OrderBy(x => x[0])
+                       .ToList();
+                        IsDescending = false;
+                    }
+                    connection.Close();
+                }
+                ViewBag.Data = Data;
+            }
 
             return View();
         }
