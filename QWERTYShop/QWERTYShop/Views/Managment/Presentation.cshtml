@@ -3,25 +3,31 @@
 
 <form method="post" align="left">
     <input type="text" value="Remove" name="Remove" readonly />
-    <input type="submit"/>
+    <input type="submit" />
 </form>
+
 <p>Сортировка по:</p>
 <form method="post">
-    <input type="text" value="ID" name="Id" readonly/>
-    <input type="submit"/>
+    <input type="text" value="ID" name="Id" readonly />
+    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    <input type="submit" />
 </form>
+
 <form method="post">
     <input type="text" value="Name" name="Name" readonly />
-    <input type="submit"/>
+    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    <input type="submit" />
 </form>
+
 <form method="post">
     <input type="text" value="Type" name="Type" readonly />
-    <input type="submit"/>
-</form> 
+    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    <input type="submit" />
+</form>
+
 <p align="right"> @Html.ActionLink("Вернуться к добавлению", "Index", "Managment") </p>
 
 @foreach (var element in ViewBag.Data)
 {
     <p align="center"> @element</p>
 }
-
