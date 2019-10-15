@@ -83,15 +83,14 @@ namespace QWERTYShop.Controllers
         [HttpPost]
         public ActionResult Presentation(ManagmentSortModels model)
         {
-            string currentModel;
+            string currentModel = "";
             if (model.Id != null) currentModel = model.Id;
             if (model.Type != null) currentModel = model.Type;
             if (model.Remove != null) currentModel = model.Remove;
             if (model.Name != null) currentModel = model.Name;
-            else currentModel = null;
             bool IsDescending = false;
             string previousCommand = currentModel;
-            if (currentModel == "delete")
+            if (currentModel == "Remove")
             {
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
@@ -121,7 +120,7 @@ namespace QWERTYShop.Controllers
             return View();
             } //удаление последней строки
 
-            if (currentModel == "id")
+            if (currentModel == "ID")
             {
                 List<string> Data = new List<string>();
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
@@ -135,24 +134,26 @@ namespace QWERTYShop.Controllers
                             dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
                             + " cost: " + dataReader[6].ToString() + "\r\n");
                     }
-                    if (previousCommand == "id"&&IsDescending==false)
+                    if (previousCommand == "id"&&IsDescending==true)
                     {
                         Data=Data
                         .OrderByDescending(x => x[0])
                         .ToList();
-                        IsDescending = true;
+                        IsDescending = false;
                     }
                     else
                     {
                         Data=Data
                        .OrderBy(x => x[0])
                        .ToList();
-                        IsDescending = false;
+                        IsDescending = true;
                     }
                     connection.Close();
                 }
                 ViewBag.Data = Data;
             }
+
+
 
             return View();
         }
