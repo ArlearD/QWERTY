@@ -257,6 +257,7 @@
     <Content Include="Views\Managment\Index.cshtml" />
     <Content Include="Views\Managment\Confirmation.cshtml" />
     <Content Include="Views\Managment\Presentation.cshtml" />
+    <Content Include="Views\Shared\_CityPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

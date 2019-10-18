@@ -31,8 +31,9 @@
                     <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>
                     @if (HttpContext.Current.User.IsInRole("admin"))
                     {
-                    <li>@Html.ActionLink("Управление", "Index", "Managment")</li>
+                        <li>@Html.ActionLink("Управление", "Index", "Managment")</li>
                     }
+                    @Html.Partial("_CityPartial")
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
