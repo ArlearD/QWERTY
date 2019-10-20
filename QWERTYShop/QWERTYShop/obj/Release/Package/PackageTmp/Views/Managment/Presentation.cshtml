@@ -1,0 +1,33 @@
+﻿@model QWERTYShop.Models.ManagmentSortModels
+<h3 align="center">Представление базы данных</h3>
+
+<form method="post" align="left">
+    <input type="text" value="Remove" name="Remove" readonly />
+    <input type="submit" />
+</form>
+
+<p>Сортировка по:</p>
+<form method="post">
+    <input type="text" value="ID" name="Id" readonly />
+    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    <input type="submit" />
+</form>
+
+<form method="post">
+    <input type="text" value="Name" name="Name" readonly />
+    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    <input type="submit" />
+</form>
+
+<form method="post">
+    <input type="text" value="Type" name="Type" readonly />
+    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    <input type="submit" />
+</form>
+
+<p align="right"> @Html.ActionLink("Вернуться к добавлению", "Index", "Managment") </p>
+
+@foreach (var element in ViewBag.Data)
+{
+    <p align="center"> @element</p>
+}

@@ -22,11 +22,11 @@ namespace QWERTYShop.Models
     {
         [Required]
         [Display(Name = "Логин")]
-        [StringLength(20, ErrorMessage = "Логин должен быть как минимум из 3 символов", MinimumLength = 3)]
+        [StringLength(20, ErrorMessage = "Логин должен быть от 3 до 20 символов", MinimumLength = 3)]
         public string Login { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "Пароль должен быть как минимум из 6 символов", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "Пароль должен быть от 6 до 100 символов", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }

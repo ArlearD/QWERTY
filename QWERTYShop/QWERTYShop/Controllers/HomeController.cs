@@ -12,18 +12,6 @@ namespace QWERTYShop.Controllers
     {
         public ActionResult Index()
         {
-            string userIp = Request.UserHostAddress;
-            string request= @"http://api.ipstack.com/"+userIp+@"?access_key=00981594f20ffe322488ebd4b9ad9678&fields=city";
-            string result = "";
-            using (WebClient wc = new WebClient())
-            {
-                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                result = wc.UploadString(request, "");
-                result=result.Remove(0, 8);
-                result = result.Remove(result.Length - 1, 1);
-            }
-
-            @ViewBag.City = result;
             return View();
         }
 

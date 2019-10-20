@@ -58,6 +58,7 @@ namespace QWERTYShop.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult Presentation()
         {
             List<string> Data;
