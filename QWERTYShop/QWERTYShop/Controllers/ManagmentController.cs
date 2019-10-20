@@ -81,7 +81,7 @@ namespace QWERTYShop.Controllers
                     command.Parameters.AddWithValue("id", cardsModels.Id);
                     command.ExecuteNonQuery();
                     connection.Close();
-                    return Redirect("Managment/Confirmation");
+                    return Redirect("Confirmation");
                 }
             }
             return View();

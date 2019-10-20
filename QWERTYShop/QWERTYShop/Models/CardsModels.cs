@@ -24,5 +24,10 @@ namespace QWERTYShop.Models
 
         [Required(ErrorMessage = "Введите тип продукта")]
         public string Type { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id:={Id} Name:={Name} Cost:={Cost} Image:={Image} Information:={Information} Type:={Type}";
+        }
     }
 }

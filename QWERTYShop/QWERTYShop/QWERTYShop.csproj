@@ -264,6 +264,7 @@
     <Content Include="Views\Home\ChangeCity.cshtml" />
     <Content Include="Views\Managment\AddNewCard.cshtml" />
     <Content Include="Views\Managment\AddNewCity.cshtml" />
+    <Content Include="Views\Home\Card.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -15,7 +15,63 @@ namespace QWERTYShop.Controllers
         string ConnectionString = "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
         public ActionResult Index()
         {
+            List<CardsModels> Data = new List<CardsModels>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards;", connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            CardsModels card = new CardsModels();
+                            card.Id = reader.GetInt64(0);
+                            card.Name = reader.GetString(1);
+                            card.Type = reader.GetString(2);
+                            card.Image = reader.GetString(4);
+                            card.Information = reader.GetString(5);
+                            card.Cost = reader.GetInt32(6);
+                            Data.Add(card);
+                        }
+                    }
+                }
+                ViewBag.Cards = Data;
+            }
             return View();
+        }
+
+        [Route("card/{id}")]
+        public ActionResult Card(long? id)
+        {
+            CardsModels card = new CardsModels();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            card.Id = reader.GetInt64(0);
+                            card.Name = reader.GetString(1);
+                            card.Type = reader.GetString(2);
+                            card.Image = reader.GetString(4);
+                            card.Information = reader.GetString(5);
+                            card.Cost = reader.GetInt32(6);
+                        }
+                    }
+                }
+                return View(card);
+            }
+        }
+
+        public ActionResult Card()
+        {
+            return Redirect("/home");
         }
 
         public ActionResult About()
@@ -78,7 +134,6 @@ namespace QWERTYShop.Controllers
                 ViewBag.CityList = Data;
                 return View();
             }
-            return View();
         }
     }
 }

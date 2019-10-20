@@ -1,2 +1,6 @@
-﻿
-<h1>@ViewBag.City</h1>
+﻿<br />
+<br />
+@foreach(var element in @ViewBag.Cards)
+{
+<p>@element @Html.ActionLink("Содержимое карточки", "Card", "Home", new { id = element.Id }, null)</p>
+}
