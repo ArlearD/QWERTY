@@ -11,6 +11,8 @@ namespace QWERTYShop.Models
         public string Id { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
-        public bool isDescending { get; set; }
+        public bool isIdDescending { get; set; }
+        public bool isNameDescending { get; set; }
+        public bool isTypeDescending { get; set; }
     }
 }

@@ -89,7 +89,6 @@ namespace QWERTYShop.Controllers
             if (model.Type != null) currentModel = model.Type;
             if (model.Remove != null) currentModel = model.Remove;
             if (model.Name != null) currentModel = model.Name;
-            bool IsDescending = false;
             string previousCommand = currentModel;
             if (currentModel == "Remove")
             {
@@ -123,9 +122,8 @@ namespace QWERTYShop.Controllers
 
             if (currentModel == "ID")
             {
-                IsDescending = model.isDescending;
                 List<string> Data = new List<string>();
-                if (IsDescending)
+                if (model.isIdDescending)
                 {
                     using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                     {
@@ -162,9 +160,8 @@ namespace QWERTYShop.Controllers
 
             if (currentModel == "Type")
             {
-                IsDescending = model.isDescending;
                 List<string> Data = new List<string>();
-                if (IsDescending)
+                if (model.isTypeDescending)
                 {
                     using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                     {
@@ -201,9 +198,8 @@ namespace QWERTYShop.Controllers
 
             if (currentModel == "Name")
             {
-                IsDescending = model.isDescending;
                 List<string> Data = new List<string>();
-                if (IsDescending)
+                if (model.isNameDescending)
                 {
                     using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                     {

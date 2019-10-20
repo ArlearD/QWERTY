@@ -9,19 +9,19 @@
 <p>Сортировка по:</p>
 <form method="post">
     <input type="text" value="ID" name="Id" readonly />
-    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    @Html.CheckBoxFor(x => x.isIdDescending) По убыванию
     <input type="submit" />
 </form>
 
 <form method="post">
     <input type="text" value="Name" name="Name" readonly />
-    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    @Html.CheckBoxFor(x => x.isNameDescending) По убыванию
     <input type="submit" />
 </form>
 
 <form method="post">
     <input type="text" value="Type" name="Type" readonly />
-    @Html.CheckBoxFor(x => x.isDescending, false) По убыванию
+    @Html.CheckBoxFor(x => x.isTypeDescending) По убыванию
     <input type="submit" />
 </form>
 
