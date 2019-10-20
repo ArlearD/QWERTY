@@ -206,6 +206,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AddNewCityModels.cs" />
     <Compile Include="Models\CardsModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -259,6 +260,9 @@
     <Content Include="Views\Managment\Confirmation.cshtml" />
     <Content Include="Views\Managment\Presentation.cshtml" />
     <Content Include="Views\Shared\_CityPartial.cshtml" />
+    <Content Include="Views\Home\ChangeCity.cshtml" />
+    <Content Include="Views\Managment\AddNewCard.cshtml" />
+    <Content Include="Views\Managment\AddNewCity.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

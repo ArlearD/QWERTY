@@ -25,7 +25,8 @@
     <input type="submit" />
 </form>
 
-<p align="right"> @Html.ActionLink("Вернуться к добавлению", "Index", "Managment") </p>
+<p align="left"> @Html.ActionLink("Вернуться к добавлению", "AddNewCard", "Managment") </p>
+<p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
 
 @foreach (var element in ViewBag.Data)
 {

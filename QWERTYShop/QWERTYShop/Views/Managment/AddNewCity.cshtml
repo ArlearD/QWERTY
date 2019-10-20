@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+@{
+    ViewBag.Title = "AddNewCity";
+}
+@model QWERTYShop.Models.AddNewCityModels
+
+<form method="post" align="center">
+    <br />
+    <br />
+    <p>@ViewBag.AddNewCitySuccess</p>
+    @Html.LabelFor(model => model.City)
+    @Html.ValidationMessageFor(model => model.City)
+    <br />
+    <input type="text" name="City" required />
+    <br />
+    @Html.LabelFor(model=>model.IsAvailableForPickup)
+    <br />
+    @Html.CheckBoxFor(model => model.IsAvailableForPickup)
+    <br />
+    @Html.LabelFor(model => model.CostForDelivery)
+    @Html.ValidationMessageFor(model => model.CostForDelivery)
+    <br />
+    <input type="text" name="CostForDelivery" required />
+    <br />
+    <br />
+    <input type="submit" value="Добавить" />
+</form>
+<p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
+

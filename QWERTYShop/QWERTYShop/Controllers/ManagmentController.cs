@@ -18,8 +18,42 @@ namespace QWERTYShop.Controllers
             return View();
         }
 
+        public ActionResult AddNewCard()
+        {
+            return View();
+        }
+
+        public ActionResult AddNewCity()
+        {
+            return View();
+        }
+
         [HttpPost]
-        public ActionResult Index(CardsModels cardsModels)
+        public ActionResult AddNewCity(AddNewCityModels model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.citylist(City, IsAvailableForPickup, CostForDelivery) VALUES (@c, @i, @cfd)", connection);
+                    command.Parameters.AddWithValue("c", model.City);
+                    command.Parameters.AddWithValue("i", model.IsAvailableForPickup);
+                    command.Parameters.AddWithValue("cfd", model.CostForDelivery);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+                @ViewBag.AddNewCitySuccess = "Успешно!";
+            }
+            else
+            {
+                @ViewBag.AddNewCitySuccess = "Что-то пошло не так, попробуйте снова!";
+            }
+            return View(); 
+        }
+
+        [HttpPost]
+        public ActionResult AddNewCard(CardsModels cardsModels)
         {
             Thread.Sleep(50);
             if (ModelState.IsValid)

@@ -28,5 +28,10 @@ namespace QWERTYShop.Controllers
 
             return View();
         }
+
+        public ActionResult ChangeCity()
+        {
+            return View();
+        }
     }
 }
