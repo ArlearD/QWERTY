@@ -208,6 +208,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AddNewCityModels.cs" />
     <Compile Include="Models\CardsModels.cs" />
+    <Compile Include="Models\CityModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ManagmentSortModels.cs" />
