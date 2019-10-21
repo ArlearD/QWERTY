@@ -11,6 +11,7 @@ namespace QWERTYShop.Models
         public int Count { get; set; }
         public string Name { get; set; }
         public int Cost { get; set; }
+        public string Method { get; set; }
 
         public override string ToString()
         {

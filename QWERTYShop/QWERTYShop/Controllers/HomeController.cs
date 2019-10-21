@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using QWERTYShop.Models;
 using System.Threading;
+using System.Text;
 
 namespace QWERTYShop.Controllers
 {
@@ -202,15 +203,127 @@ namespace QWERTYShop.Controllers
             if (Session["cart"] == null)
             {
                 Session["cart"] = id + ":1";
+                return RedirectToAction("Cart");
+            }
+            string[] idsAndCount;
+            var cart = Session["cart"].ToString();
+            if (cart.Contains(','))
+            {
+                idsAndCount = cart.Split(',');
             }
             else
             {
-                var currCart=Session["cart"].ToString();
-                currCart += $",{id}:1";
-                Session["cart"] = currCart;
+                idsAndCount = new string[1];
+                idsAndCount[0] = cart;
             }
 
+            for (var i = 0; i < idsAndCount.Length; i++)
+            {
+                var parsedIdsAndCount = idsAndCount[i].Split(':');
+                if (long.Parse(parsedIdsAndCount[0]) == id)
+                    return RedirectToAction("Cart"); //выдавать сообщения, типо товар уже в корзине
+            }
+
+            var currCart=Session["cart"].ToString();
+            currCart += $",{id}:1";
+            Session["cart"] = currCart;
+
             return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        public ActionResult Cart(CartModels model)
+        {
+            if (model.Method == "/")
+            {
+                ViewBag.CartMessage = "Ваша корзина пустая";
+                ViewBag.CartContainer = "";
+                ViewBag.CartPrice = "";
+                Session["cart"] = null;
+                return View();
+            }
+            int totalPrice = 0;
+            if(Session["cart"]==null)
+            {
+                ViewBag.CartMessage = "Ваша корзина пустая";
+                ViewBag.CartContainer = "";
+                ViewBag.CartPrice = "";
+                return View();
+            }
+            var currCart = Session["cart"].ToString(); //парсинг
+            List<CartModels> cartElements = new List<CartModels>();
+            string[] idsAndCount;
+            if (currCart.Contains(','))
+            {
+                idsAndCount = currCart.Split(',');
+            }
+            else
+            {
+                idsAndCount = new string[1];
+                idsAndCount[0] = currCart;
+            }
+            for (var i = 0; i < idsAndCount.Length; i++)
+            {
+                var parsedIdsAndCount = idsAndCount[i].Split(':');
+                var id = long.Parse(parsedIdsAndCount[0]);
+                var count = int.Parse(parsedIdsAndCount[1]);
+                if (id == model.Id && model.Method=="+") count++;
+                if (id == model.Id && model.Method == "-") count--;
+                if (count!=0) 
+                    cartElements.Add(new CartModels { Id=id, Count=count});
+            }
+
+            if(cartElements.Count==0)
+            {
+                ViewBag.CartMessage = "Ваша корзина пустая";
+                ViewBag.CartContainer = "";
+                ViewBag.CartPrice = "";
+                Session["cart"] = null;
+                return View();
+            }
+
+            for (int i = 0; i < cartElements.Count; i++)
+            {
+                using (var connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    using (NpgsqlCommand command = new NpgsqlCommand($"SELECT name, cost FROM public.cards where id={cartElements[i].Id};", connection))
+                    {
+                        var reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                cartElements[i].Name = reader.GetString(0);
+                                cartElements[i].Cost = reader.GetInt32(1);
+                            }
+                        }
+                    }
+                }
+            } //получение информации по Id
+
+            ViewBag.CartContainer = cartElements;
+
+            for (int i = 0; i < cartElements.Count; i++) //подсчёт общей суммы
+            {
+                totalPrice += (cartElements[i].Cost * cartElements[i].Count);
+            }
+            ViewBag.CartPrice = totalPrice.ToString();
+
+
+            StringBuilder str = new StringBuilder();
+            for (int i = 0; i < cartElements.Count; i++)
+            {
+                if (cartElements.Count == 1)
+                    str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
+                else
+                    if (i == cartElements.Count-1)
+                        str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
+                    else
+                        str.Append(cartElements[i].Id + ":" + cartElements[i].Count+",");
+            }
+            Session["cart"] = str.ToString();
+            return View();
         }
     }
 }
