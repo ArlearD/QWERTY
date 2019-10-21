@@ -2,5 +2,5 @@
 <br />
 @foreach(var element in @ViewBag.Cards)
 {
-<p>@element @Html.ActionLink("Содержимое карточки", "Card", "Home", new { id = element.Id }, null)</p>
+<p>@element @Html.ActionLink("Содержимое карточки", "Card", "Home", new { id = element.Id }, null) @Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</p>
 }

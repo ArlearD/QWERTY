@@ -8,4 +8,6 @@
 <p>@Model.Information</p>
 <p>@Model.Cost</p>
 
-<input type="submit" name="Purchase" value="Купить!" style="color:darkred" />
+<form>
+    <input type="button" style="color:red" value="Купить!" onClick='location.href="http://localhost:52905/AddToCard/@Model.Id"'>
+</form>

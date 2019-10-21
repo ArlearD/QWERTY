@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Cart";
+}
+
+<h2 align="center">Моя корзина</h2>
+<h3>@ViewBag.CartMessage</h3>
+@foreach (var element in ViewBag.CartContainer)
+{
+    <p>@element</p>
+}
+
+<h3>@ViewBag.CartPrice</h3>
