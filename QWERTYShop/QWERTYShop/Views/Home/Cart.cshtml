@@ -14,6 +14,7 @@
 @foreach (var element in ViewBag.CartContainer)
 {
     <p>@element </p>
+    <p>@Html.ActionLink($"{@element.Name}", "Card", "Home", new { id = element.Id }, null)</p>
     <form method="post">
         <input type="submit" value="+" name="Method" />
         <input type="number" hidden=hidden value="@element.Id" name="Id" />
@@ -30,6 +31,6 @@
 }
 @if (Session["cart"] != null)
 {
-    <input type="button" value="Оформить покупку!" style="color:red" />
+    <input type="button" value="Оформить покупку!" style="color:red" onClick='location.href="http://localhost:52905/home/purchaseinfo"'/>
 }
 

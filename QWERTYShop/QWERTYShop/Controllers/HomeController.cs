@@ -325,5 +325,11 @@ namespace QWERTYShop.Controllers
             Session["cart"] = str.ToString();
             return View();
         }
+
+        [Authorize]
+        public ActionResult PurchaseInfo()
+        {
+            return View();
+        }
     }
 }

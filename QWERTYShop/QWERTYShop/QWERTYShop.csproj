@@ -270,6 +270,7 @@
     <Content Include="Views\Shared\_CartPartial.cshtml" />
     <Content Include="Views\Home\Cart.cshtml" />
     <Content Include="Views\Home\AddToCard.cshtml" />
+    <Content Include="Views\Home\PurchaseInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
