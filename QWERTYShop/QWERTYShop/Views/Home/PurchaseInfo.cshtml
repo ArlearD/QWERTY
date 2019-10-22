@@ -3,10 +3,9 @@
     ViewBag.Title = "PurchaseInfo";
 }
 
-<h2>Оформление покупки</h2>
-
+<h2>Выбор получения товара</h2>
 <p>Ваш текущий город: @Session["CityName"]</p>
-@if (ViewBag.IsAvailableForPickup)
+@if (ViewBag.IsAvailableForPickup=="True")
 {
     <p>Выберите вариант получения товара:</p>
     <form method="post">
@@ -15,7 +14,7 @@
             <option>Доставка до квартиры</option>
         </select>
         <input type="checkbox" checked value="true" name="IsAvailableForPickup" hidden />
-        <input type="submit" value="выбрать" />
+        <input type="submit" value="выбрать" onClick='location.href="http://localhost:52905/purchasedata"'/>
     </form>
 }
 else
@@ -24,50 +23,7 @@ else
     <form method="post">
         <input type="checkbox" name="IsAvailableForPickup" hidden />
         <input type="text" value="Доставка до квартиры" hidden name="Method" />
-        <input type="submit" value="продолжить" />
+        <input type="submit" value="продолжить" onClick='location.href="http://localhost:52905/purchasedata"'/>
     </form>
-}
-
-@if (ViewBag.Delivery == "Доставка до квартиры")
-{
-    <form method="post">
-        @Html.LabelFor(model => model.City)
-        @Html.ValidationMessageFor(model => model.City)<br />
-        <input type="text" name="City" required value="@Session["CityName"]" readonly /> <br /><br />
-
-        @Html.LabelFor(model => model.Street)
-        @Html.ValidationMessageFor(model => model.Street)<br />
-        <input type="text" name="Street" required /> <br /><br />
-
-        @Html.LabelFor(model => model.House)
-        @Html.ValidationMessageFor(model => model.House)<br />
-        <input type="number" name="House" required /> <br /><br />
-
-        @Html.LabelFor(model => model.Flat)
-        @Html.ValidationMessageFor(model => model.Flat)<br />
-        <input type="number" name="Flat" required /> <br /><br />
-
-        @Html.LabelFor(model => model.PhoneNumber)
-        @Html.ValidationMessageFor(model => model.PhoneNumber)<br />
-        <input type="number" name="PhoneNumber" required min="80000000000" /> <br /><br />
-
-        @Html.LabelFor(model => model.Mail)
-        @Html.ValidationMessageFor(model => model.Mail)<br />
-        <input type="text" name="Mail" required min="80000000000" /> <br /><br />
-
-        <input type="text" name="Method" hidden value="DeliveryToHouse" />
-        <p>Выберите тип оплаты:</p>
-        <select name="Payment">
-            <option>Оплата онлайн</option>
-            <option>Наличными курьеру</option>
-            <option>Картой курьеру</option>
-        </select>
-
-        <input type="submit" value="продолжить" />
-    </form>
-}
-else
-{
-
 }
 

@@ -1,0 +1,72 @@
+﻿@model QWERTYShop.Models.PurchaseModels
+@{
+    ViewBag.Title = "PurchaseData";
+}
+
+<h2>Данные покупки</h2>
+<p style="color:red">@ViewBag.Message</p>
+@if (Session["Delivery"].ToString() == "Доставка до квартиры")
+{
+<form method="post">
+    @Html.LabelFor(model => model.City)
+    @Html.ValidationMessageFor(model => model.City)<br />
+    <input type="text" name="City" required value="@Session["CityName"]" readonly /> <br /><br />
+
+    @Html.LabelFor(model => model.Street)
+    @Html.ValidationMessageFor(model => model.Street)<br />
+    <input type="text" name="Street" required /> <br /><br />
+
+    @Html.LabelFor(model => model.House)
+    @Html.ValidationMessageFor(model => model.House)<br />
+    <input type="number" name="House" required /> <br /><br />
+
+    @Html.LabelFor(model => model.Flat)
+    @Html.ValidationMessageFor(model => model.Flat)<br />
+    <input type="number" name="Flat" required /> <br /><br />
+
+    @Html.LabelFor(model => model.PhoneNumber)
+    @Html.ValidationMessageFor(model => model.PhoneNumber)<br />
+    <input type="number" name="PhoneNumber" required min="80000000000" /> <br /><br />
+
+    @Html.LabelFor(model => model.Mail)
+    @Html.ValidationMessageFor(model => model.Mail)<br />
+    <input type="text" name="Mail" required /> <br /><br />
+
+    @Html.LabelFor(model => model.DeliveryDate)
+    @Html.ValidationMessageFor(model => model.DeliveryDate)<br />
+    <input type="text" name="DeliveryDate" required /> <br /><br />
+    <input type="text" name="PickupDate" hidden value="23.05.2000" />
+
+    <input type="text" name="Method" hidden value="DeliveryToHouse" />
+    <p>Выберите тип оплаты:</p>
+    <select name="Payment">
+        <option>Оплата онлайн</option>
+        <option>Наличными курьеру</option>
+        <option>Картой курьеру</option>
+    </select>
+
+    <input type="submit" value="продолжить" />
+</form>
+}
+@if (Session["Delivery"].ToString() == "Самовывоз")
+{
+    <form method="post">
+        @Html.LabelFor(model => model.Mail)
+        @Html.ValidationMessageFor(model => model.Mail)<br />
+        <input type="text" name="Mail" required /> <br /><br />
+
+        @Html.LabelFor(model => model.PickupDate)
+        @Html.ValidationMessageFor(model => model.PickupDate)<br />
+        <input type="text" name="PickupDate" required /> <br /><br />
+
+        <input type="text" name="Method" hidden value="Pickup" />
+        <p>Выберите тип оплаты:</p>
+        <select name="Payment">
+            <option>Оплата онлайн</option>
+            <option>Наличными в пункте выдачи заказа</option>
+            <option>Картой в пункте выдачи заказа</option>
+        </select>
+        <input type="submit" value="продолжить" />
+    </form>
+}
+

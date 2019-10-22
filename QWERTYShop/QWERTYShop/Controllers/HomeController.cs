@@ -156,7 +156,7 @@ namespace QWERTYShop.Controllers
             {
                 var parsedIdsAndCount = idsAndCount[i].Split(':');
                 cartElements.Add(new CartModels
-                    {Id = long.Parse(parsedIdsAndCount[0]), Count = int.Parse(parsedIdsAndCount[1])});
+                { Id = long.Parse(parsedIdsAndCount[0]), Count = int.Parse(parsedIdsAndCount[1]) });
             }
 
             for (var i = 0; i < cartElements.Count; i++)
@@ -262,7 +262,7 @@ namespace QWERTYShop.Controllers
                 if (id == model.Id && model.Method == "+") count++;
                 if (id == model.Id && model.Method == "-") count--;
                 if (count != 0)
-                    cartElements.Add(new CartModels {Id = id, Count = count});
+                    cartElements.Add(new CartModels { Id = id, Count = count });
             }
 
             if (cartElements.Count == 0)
@@ -314,7 +314,7 @@ namespace QWERTYShop.Controllers
         [Authorize]
         public ActionResult PurchaseInfo()
         {
-            bool isAvailableForPickup = false;
+            string isAvailableForPickup = "False";
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
@@ -326,30 +326,69 @@ namespace QWERTYShop.Controllers
                     if (reader.HasRows)
                         while (reader.Read())
                         {
-                            isAvailableForPickup = reader.GetBoolean(0);
+                            isAvailableForPickup = reader.GetBoolean(0).ToString();
                         }
                 }
             }
-
             ViewBag.IsAvailableForPickup = isAvailableForPickup;
             return View();
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         public ActionResult PurchaseInfo(PurchaseModels model)
         {
-            if(model.Method == "DeliveryToHouse"&&(model.Payment == "Картой курьеру"|| model.Payment=="Наличными курьеру"))
+            Session["Delivery"] = model.Method;
+            return RedirectToAction("PurchaseData");
+        }
+
+        public ActionResult Success()
+        {
+            return View();
+        }
+
+        public ActionResult Payment()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Payment(PaymentModels model)
+        {
+            if (ModelState.IsValid)
             {
-                return Redirect("index"); //вывести страницу с подтвержением
+                return Redirect("success");
             }
-            var isAvailableForPickup = false;
-            if (model.IsAvailableForPickup == "true")
-                isAvailableForPickup = true;
-            ViewBag.IsAvailableForPickup = isAvailableForPickup;
 
-            ViewBag.Delivery = model.Method;
+            return Redirect("payment");
+        }
 
+        
+        public ActionResult PurchaseData()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult PurchaseData(PurchaseModels model)
+        {
+            if (ModelState.IsValid&&model.Payment== "Оплата онлайн")
+            {
+                return Redirect("payment");
+            }
+
+            if (model.Payment == "Оплата онлайн")
+            {
+                ViewBag.Message = "Введите поля корректно!";
+                return View();
+            }
+
+            if (ModelState.IsValid)
+            {
+                return Redirect("success");
+            }
+
+            ViewBag.Message = "Введите поля корректно!";
             return View();
         }
     }

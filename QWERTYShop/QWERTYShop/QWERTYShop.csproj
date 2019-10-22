@@ -213,6 +213,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ManagmentSortModels.cs" />
+    <Compile Include="Models\PaymentModels.cs" />
     <Compile Include="Models\PurchaseModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -272,6 +273,9 @@
     <Content Include="Views\Home\Cart.cshtml" />
     <Content Include="Views\Home\AddToCard.cshtml" />
     <Content Include="Views\Home\PurchaseInfo.cshtml" />
+    <Content Include="Views\Home\Success.cshtml" />
+    <Content Include="Views\Home\Payment.cshtml" />
+    <Content Include="Views\Home\PurchaseData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
