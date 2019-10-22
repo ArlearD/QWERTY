@@ -1,34 +1,30 @@
-﻿using Npgsql;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
-using System.Web.Mvc;
-using QWERTYShop.Models;
-using System.Threading;
 using System.Text;
+using System.Web.Mvc;
+using Npgsql;
+using QWERTYShop.Models;
 
 namespace QWERTYShop.Controllers
 {
     public class HomeController : Controller
     {
-        string ConnectionString = "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
+        private readonly string ConnectionString =
+            "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
+
         public ActionResult Index()
         {
-            List<CardsModels> Data = new List<CardsModels>();
+            var Data = new List<CardsModels>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards;", connection))
+                using (var command = new NpgsqlCommand("SELECT * FROM public.cards;", connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
-                    {
                         while (reader.Read())
                         {
-                            CardsModels card = new CardsModels();
+                            var card = new CardsModels();
                             card.Id = reader.GetInt64(0);
                             card.Name = reader.GetString(1);
                             card.Type = reader.GetString(2);
@@ -37,25 +33,25 @@ namespace QWERTYShop.Controllers
                             card.Cost = reader.GetInt32(6);
                             Data.Add(card);
                         }
-                    }
                 }
+
                 ViewBag.Cards = Data;
             }
+
             return View();
         }
 
         [Route("card/{id}")]
         public ActionResult Card(long? id)
         {
-            CardsModels card = new CardsModels();
+            var card = new CardsModels();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (NpgsqlCommand command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
+                using (var command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
-                    {
                         while (reader.Read())
                         {
                             card.Id = reader.GetInt64(0);
@@ -65,8 +61,8 @@ namespace QWERTYShop.Controllers
                             card.Information = reader.GetString(5);
                             card.Cost = reader.GetInt32(6);
                         }
-                    }
                 }
+
                 return View(card);
             }
         }
@@ -89,25 +85,22 @@ namespace QWERTYShop.Controllers
 
             return View();
         }
-        
+
         [HttpGet]
         public ActionResult ChangeCity()
         {
-            List<string> Data = new List<string>();
+            var Data = new List<string>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (NpgsqlCommand command = new NpgsqlCommand("SELECT City FROM public.CityList;", connection))
+                using (var command = new NpgsqlCommand("SELECT City FROM public.CityList;", connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
-                    {
                         while (reader.Read())
-                        {
                             Data.Add(reader.GetString(0));
-                        }
-                    }
                 }
+
                 ViewBag.CityList = Data;
                 return View();
             }
@@ -118,21 +111,18 @@ namespace QWERTYShop.Controllers
         {
             Session["CityName"] = model.City;
             ViewBag.ChangeCitySuccess = "Успешно!";
-            List<string> Data = new List<string>();
+            var Data = new List<string>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (NpgsqlCommand command = new NpgsqlCommand("SELECT City FROM public.CityList;", connection))
+                using (var command = new NpgsqlCommand("SELECT City FROM public.CityList;", connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
-                    {
                         while (reader.Read())
-                        {
                             Data.Add(reader.GetString(0));
-                        }
-                    }
                 }
+
                 ViewBag.CityList = Data;
                 return View();
             }
@@ -148,9 +138,9 @@ namespace QWERTYShop.Controllers
                 return View();
             }
 
-            int totalPrice = 0;
+            var totalPrice = 0;
             var currCart = Session["cart"].ToString(); //парсинг
-            List<CartModels> cartElements = new List<CartModels>();
+            var cartElements = new List<CartModels>();
             string[] idsAndCount;
             if (currCart.Contains(','))
             {
@@ -161,38 +151,36 @@ namespace QWERTYShop.Controllers
                 idsAndCount = new string[1];
                 idsAndCount[0] = currCart;
             }
+
             for (var i = 0; i < idsAndCount.Length; i++)
             {
                 var parsedIdsAndCount = idsAndCount[i].Split(':');
-                cartElements.Add(new CartModels{Id = long.Parse(parsedIdsAndCount[0]), Count = int.Parse(parsedIdsAndCount[1])});
+                cartElements.Add(new CartModels
+                    {Id = long.Parse(parsedIdsAndCount[0]), Count = int.Parse(parsedIdsAndCount[1])});
             }
 
-            for (int i = 0; i < cartElements.Count; i++)
-            {
+            for (var i = 0; i < cartElements.Count; i++)
                 using (var connection = new NpgsqlConnection(ConnectionString))
                 {
                     connection.Open();
-                    using (NpgsqlCommand command = new NpgsqlCommand($"SELECT name, cost FROM public.cards where id={cartElements[i].Id};", connection))
+                    using (var command =
+                        new NpgsqlCommand($"SELECT name, cost FROM public.cards where id={cartElements[i].Id};",
+                            connection))
                     {
                         var reader = command.ExecuteReader();
                         if (reader.HasRows)
-                        {
                             while (reader.Read())
                             {
                                 cartElements[i].Name = reader.GetString(0);
                                 cartElements[i].Cost = reader.GetInt32(1);
                             }
-                        }
                     }
                 }
-            } //получение информации по Id
 
             ViewBag.CartContainer = cartElements;
 
-            for (int i = 0; i < cartElements.Count; i++) //подсчёт общей суммы
-            {
-                totalPrice += (cartElements[i].Cost * cartElements[i].Count);
-            }
+            for (var i = 0; i < cartElements.Count; i++) //подсчёт общей суммы
+                totalPrice += cartElements[i].Cost * cartElements[i].Count;
             ViewBag.CartPrice = totalPrice.ToString();
             return View();
         }
@@ -205,6 +193,7 @@ namespace QWERTYShop.Controllers
                 Session["cart"] = id + ":1";
                 return RedirectToAction("Cart");
             }
+
             string[] idsAndCount;
             var cart = Session["cart"].ToString();
             if (cart.Contains(','))
@@ -224,7 +213,7 @@ namespace QWERTYShop.Controllers
                     return RedirectToAction("Cart"); //выдавать сообщения, типо товар уже в корзине
             }
 
-            var currCart=Session["cart"].ToString();
+            var currCart = Session["cart"].ToString();
             currCart += $",{id}:1";
             Session["cart"] = currCart;
 
@@ -242,16 +231,18 @@ namespace QWERTYShop.Controllers
                 Session["cart"] = null;
                 return View();
             }
-            int totalPrice = 0;
-            if(Session["cart"]==null)
+
+            if (Session["cart"] == null)
             {
                 ViewBag.CartMessage = "Ваша корзина пустая";
                 ViewBag.CartContainer = "";
                 ViewBag.CartPrice = "";
                 return View();
             }
+
+            var totalPrice = 0;
             var currCart = Session["cart"].ToString(); //парсинг
-            List<CartModels> cartElements = new List<CartModels>();
+            var cartElements = new List<CartModels>();
             string[] idsAndCount;
             if (currCart.Contains(','))
             {
@@ -262,18 +253,19 @@ namespace QWERTYShop.Controllers
                 idsAndCount = new string[1];
                 idsAndCount[0] = currCart;
             }
+
             for (var i = 0; i < idsAndCount.Length; i++)
             {
                 var parsedIdsAndCount = idsAndCount[i].Split(':');
                 var id = long.Parse(parsedIdsAndCount[0]);
                 var count = int.Parse(parsedIdsAndCount[1]);
-                if (id == model.Id && model.Method=="+") count++;
+                if (id == model.Id && model.Method == "+") count++;
                 if (id == model.Id && model.Method == "-") count--;
-                if (count!=0) 
-                    cartElements.Add(new CartModels { Id=id, Count=count});
+                if (count != 0)
+                    cartElements.Add(new CartModels {Id = id, Count = count});
             }
 
-            if(cartElements.Count==0)
+            if (cartElements.Count == 0)
             {
                 ViewBag.CartMessage = "Ваша корзина пустая";
                 ViewBag.CartContainer = "";
@@ -282,46 +274,39 @@ namespace QWERTYShop.Controllers
                 return View();
             }
 
-            for (int i = 0; i < cartElements.Count; i++)
-            {
+            for (var i = 0; i < cartElements.Count; i++)
                 using (var connection = new NpgsqlConnection(ConnectionString))
                 {
                     connection.Open();
-                    using (NpgsqlCommand command = new NpgsqlCommand($"SELECT name, cost FROM public.cards where id={cartElements[i].Id};", connection))
+                    using (var command =
+                        new NpgsqlCommand($"SELECT name, cost FROM public.cards where id={cartElements[i].Id};",
+                            connection))
                     {
                         var reader = command.ExecuteReader();
                         if (reader.HasRows)
-                        {
                             while (reader.Read())
                             {
                                 cartElements[i].Name = reader.GetString(0);
                                 cartElements[i].Cost = reader.GetInt32(1);
                             }
-                        }
                     }
                 }
-            } //получение информации по Id
 
             ViewBag.CartContainer = cartElements;
 
-            for (int i = 0; i < cartElements.Count; i++) //подсчёт общей суммы
-            {
-                totalPrice += (cartElements[i].Cost * cartElements[i].Count);
-            }
+            for (var i = 0; i < cartElements.Count; i++) //подсчёт общей суммы
+                totalPrice += cartElements[i].Cost * cartElements[i].Count;
             ViewBag.CartPrice = totalPrice.ToString();
 
 
-            StringBuilder str = new StringBuilder();
-            for (int i = 0; i < cartElements.Count; i++)
-            {
+            var str = new StringBuilder();
+            for (var i = 0; i < cartElements.Count; i++)
                 if (cartElements.Count == 1)
                     str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
+                else if (i == cartElements.Count - 1)
+                    str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
                 else
-                    if (i == cartElements.Count-1)
-                        str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
-                    else
-                        str.Append(cartElements[i].Id + ":" + cartElements[i].Count+",");
-            }
+                    str.Append(cartElements[i].Id + ":" + cartElements[i].Count + ",");
             Session["cart"] = str.ToString();
             return View();
         }
@@ -329,6 +314,42 @@ namespace QWERTYShop.Controllers
         [Authorize]
         public ActionResult PurchaseInfo()
         {
+            bool isAvailableForPickup = false;
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"SELECT isavailableforpickup FROM public.citylist where city='{Session["CityName"]}';",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            isAvailableForPickup = reader.GetBoolean(0);
+                        }
+                }
+            }
+
+            ViewBag.IsAvailableForPickup = isAvailableForPickup;
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult PurchaseInfo(PurchaseModels model)
+        {
+            if(model.Method == "DeliveryToHouse"&&(model.Payment == "Картой курьеру"|| model.Payment=="Наличными курьеру"))
+            {
+                return Redirect("index"); //вывести страницу с подтвержением
+            }
+            var isAvailableForPickup = false;
+            if (model.IsAvailableForPickup == "true")
+                isAvailableForPickup = true;
+            ViewBag.IsAvailableForPickup = isAvailableForPickup;
+
+            ViewBag.Delivery = model.Method;
+
             return View();
         }
     }
