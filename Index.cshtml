@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET =)</h1>
+    <p class="lead">HARD TASK</p>
+    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Красивая кнопка &raquo;</a></p>
+</div>
+
+<table border="1">
+    @foreach (var item in ViewBag.Data)
+    {
+        <tr>
+            <td>
+                @item.Split(';')[0];
+            </td>
+            <td>
+                @item.Split(';')[1];
+            </td>
+        </tr>
+    }
+</table>
