@@ -1,0 +1,276 @@
+﻿using Npgsql;
+using QWERTYShop.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Web;
+using System.Web.Mvc;
+
+namespace QWERTYShop.Controllers
+{
+    [Authorize(Roles="admin")]
+    public class ManagmentController:Controller
+    {
+        string ConnectionString = "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult AddNewCard()
+        {
+            return View();
+        }
+
+        public ActionResult AddNewCity()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddNewCity(AddNewCityModels model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.citylist(City, IsAvailableForPickup, CostForDelivery) VALUES (@c, @i, @cfd)", connection);
+                    command.Parameters.AddWithValue("c", model.City);
+                    command.Parameters.AddWithValue("i", model.IsAvailableForPickup);
+                    command.Parameters.AddWithValue("cfd", model.CostForDelivery);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+                @ViewBag.AddNewCitySuccess = "Успешно!";
+            }
+            else
+            {
+                @ViewBag.AddNewCitySuccess = "Что-то пошло не так, попробуйте снова!";
+            }
+            return View(); 
+        }
+
+        [HttpPost]
+        public ActionResult AddNewCard(CardsModels cardsModels)
+        {
+            Thread.Sleep(50);
+            if (ModelState.IsValid)
+            {
+                cardsModels.AddedTime = DateTime.Now;
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command2 = new NpgsqlCommand("select count(*) from public.cards", connection);
+                    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.cards(Name, Type, Image, AddedTime, Cost, information, Id) VALUES (@n, @t, @i, @a, @c, @g, @id)", connection);
+                    var reader = command2.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        cardsModels.Id = reader.GetInt64(0);
+                        cardsModels.Id++;
+                    }
+                    command2.Connection.Close();
+                    connection.Open();
+                    command.Parameters.AddWithValue("n", cardsModels.Name);
+                    command.Parameters.AddWithValue("t", cardsModels.Type);
+                    command.Parameters.AddWithValue("i", cardsModels.Image);
+                    command.Parameters.AddWithValue("a", cardsModels.AddedTime);
+                    command.Parameters.AddWithValue("c", cardsModels.Cost);
+                    command.Parameters.AddWithValue("g", cardsModels.Information);
+                    command.Parameters.AddWithValue("id", cardsModels.Id);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                    return Redirect("Confirmation");
+                }
+            }
+            return View();
+        }
+
+        public ActionResult Confirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult Presentation()
+        {
+            List<string> Data;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                Data = new List<string>();
+                for (int i = 0; dataReader.Read(); i++)
+                {
+                    Data.Add("ID: "+dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                        dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString() 
+                        +" cost: "+ dataReader[6].ToString()+"\r\n");
+                }
+                connection.Close();
+            }
+            ViewBag.Data = Data;
+            Data = null;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Presentation(ManagmentSortModels model)
+        {
+            string currentModel = "";
+            if (model.Id != null) currentModel = model.Id;
+            if (model.Type != null) currentModel = model.Type;
+            if (model.Remove != null) currentModel = model.Remove;
+            if (model.Name != null) currentModel = model.Name;
+            string previousCommand = currentModel;
+            if (currentModel == "Remove")
+            {
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM public.cards WHERE ID=(SELECT MAX(id) FROM cards)", connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+
+            List<string> Data;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                Data = new List<string>();
+                for (int i = 0; dataReader.Read(); i++)
+                {
+                    Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                        dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                        + " cost: " + dataReader[6].ToString() + "\r\n");
+                }
+                connection.Close();
+            }
+            ViewBag.Data = Data;
+            Data = null;
+            return View();
+            } //удаление последней строки
+
+            if (currentModel == "ID")
+            {
+                List<string> Data = new List<string>();
+                if (model.isIdDescending)
+                {
+                    using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                    {
+                        connection.Open();
+                        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY id desc", connection);
+                        NpgsqlDataReader dataReader = command.ExecuteReader();
+                        for (int i = 0; dataReader.Read(); i++)
+                        {
+                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                                + " cost: " + dataReader[6].ToString() + "\r\n");
+                        }
+                        connection.Close();
+                    }
+                }
+                else
+                {
+                    using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                    {
+                        connection.Open();
+                        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY id asc", connection);
+                        NpgsqlDataReader dataReader = command.ExecuteReader();
+                        for (int i = 0; dataReader.Read(); i++)
+                        {
+                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                                + " cost: " + dataReader[6].ToString() + "\r\n");
+                        }
+                        connection.Close();
+                    } //сортировка по ID
+                }
+                ViewBag.Data = Data;
+            }
+
+            if (currentModel == "Type")
+            {
+                List<string> Data = new List<string>();
+                if (model.isTypeDescending)
+                {
+                    using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                    {
+                        connection.Open();
+                        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY type desc", connection);
+                        NpgsqlDataReader dataReader = command.ExecuteReader();
+                        for (int i = 0; dataReader.Read(); i++)
+                        {
+                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                                + " cost: " + dataReader[6].ToString() + "\r\n");
+                        }
+                        connection.Close();
+                    }
+                }
+                else
+                {
+                    using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                    {
+                        connection.Open();
+                        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY type asc", connection);
+                        NpgsqlDataReader dataReader = command.ExecuteReader();
+                        for (int i = 0; dataReader.Read(); i++)
+                        {
+                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                                + " cost: " + dataReader[6].ToString() + "\r\n");
+                        }
+                        connection.Close();
+                    } //сортировка по Type
+                }
+                ViewBag.Data = Data;
+            }
+
+            if (currentModel == "Name")
+            {
+                List<string> Data = new List<string>();
+                if (model.isNameDescending)
+                {
+                    using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                    {
+                        connection.Open();
+                        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY name desc", connection);
+                        NpgsqlDataReader dataReader = command.ExecuteReader();
+                        for (int i = 0; dataReader.Read(); i++)
+                        {
+                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                                + " cost: " + dataReader[6].ToString() + "\r\n");
+                        }
+                        connection.Close();
+                    }
+                }
+                else
+                {
+                    using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                    {
+                        connection.Open();
+                        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY name asc", connection);
+                        NpgsqlDataReader dataReader = command.ExecuteReader();
+                        for (int i = 0; dataReader.Read(); i++)
+                        {
+                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                                + " cost: " + dataReader[6].ToString() + "\r\n");
+                        }
+                        connection.Close();
+                    } //сортировка по ID
+                }
+                ViewBag.Data = Data;
+            }
+
+            return View();
+        }
+    }
+
+
+}

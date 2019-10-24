@@ -1,0 +1,40 @@
+﻿@model QWERTYShop.Models.CartModels
+@{
+    ViewBag.Title = "Cart";
+}
+
+<h2 align="center">Моя корзина</h2>
+<h3>@ViewBag.CartMessage</h3>
+@if (Session["cart"] != null)
+{
+    <h6 align="right">
+    <form method="post">
+    <input type="submit" value="Очистить корзину" />
+    <input type="text" hidden=hidden value="/" name="Method" />
+    </form>
+    </h6>
+}
+
+@foreach (var element in ViewBag.CartContainer)
+{
+    <p>@element </p>
+    <p>@Html.ActionLink($"{@element.Name}", "Card", "Home", new { id = element.Id }, null)</p>
+    <form method="post">
+        <input type="submit" value="+" name="Method" />
+        <input type="number" hidden=hidden value="@element.Id" name="Id" />
+    </form>
+    <form method="post">
+        <input type="submit" value="-" name="Method" />
+        <input type="number" hidden=hidden value="@element.Id" name="Id" />
+    </form>
+
+}
+@if (ViewBag.CartPrice != "")
+{
+    <h3>Текущая сумма:@ViewBag.CartPrice</h3>
+}
+@if (Session["cart"] != null)
+{
+    <input type="button" value="Оформить покупку!" style="color:red" onClick='location.href="http://localhost:52905/home/purchaseinfo"'/>
+}
+

@@ -1,0 +1,29 @@
+﻿@model QWERTYShop.Models.PurchaseModels
+@{
+    ViewBag.Title = "PurchaseInfo";
+}
+
+<h2>Выбор получения товара</h2>
+<p>Ваш текущий город: @Session["CityName"]</p>
+@if (ViewBag.IsAvailableForPickup=="True")
+{
+    <p>Выберите вариант получения товара:</p>
+    <form method="post">
+        <select name="Method">
+            <option>Самовывоз</option>
+            <option>Доставка до квартиры</option>
+        </select>
+        <input type="checkbox" checked value="true" name="IsAvailableForPickup" hidden />
+        <input type="submit" value="выбрать" onClick='location.href="http://localhost:52905/purchasedata"'/>
+    </form>
+}
+else
+{
+    <p>К сожалению, в Вашем городе наших пунктов самовывоза еще нет, поэтому доступна только доставка до квартиры:</p>
+    <form method="post">
+        <input type="checkbox" name="IsAvailableForPickup" hidden />
+        <input type="text" value="Доставка до квартиры" hidden name="Method" />
+        <input type="submit" value="продолжить" onClick='location.href="http://localhost:52905/purchasedata"'/>
+    </form>
+}
+

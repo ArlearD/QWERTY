@@ -1,0 +1,13 @@
+﻿@model QWERTYShop.Models.CardsModels
+@{
+    ViewBag.Title = "Card";
+}
+
+<h2>@Model.Name</h2>
+<p>@Model.Image</p>
+<p>@Model.Information</p>
+<p>@Model.Cost</p>
+
+<form>
+    <input type="button" style="color:red" value="Купить!" onClick='location.href="http://localhost:52905/AddToCard/@Model.Id"'>
+</form>

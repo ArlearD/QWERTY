@@ -1,0 +1,13 @@
+﻿@model QWERTYShop.Models.CityModels
+<h1 align="center">Окно смены города</h1>
+<p>Сейчас ваш город определён как: @Session["CityName"]</p>
+<form method="post">
+    <select name="City">
+        @foreach (var element in ViewBag.CityList)
+        {
+            <option>@element</option>
+        }
+    </select>
+    <input type="submit" value="выбрать"/>
+</form>
+<p>@ViewBag.ChangeCitySuccess</p>
