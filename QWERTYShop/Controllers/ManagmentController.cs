@@ -9,8 +9,8 @@ using System.Web.Mvc;
 
 namespace QWERTYShop.Controllers
 {
-    [Authorize(Roles="admin")]
-    public class ManagmentController:Controller
+    [Authorize(Roles = "admin")]
+    public class ManagmentController : Controller
     {
         string ConnectionString = "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
         public ActionResult Index()
@@ -49,7 +49,7 @@ namespace QWERTYShop.Controllers
             {
                 @ViewBag.AddNewCitySuccess = "Что-то пошло не так, попробуйте снова!";
             }
-            return View(); 
+            return View();
         }
 
         [HttpPost]
@@ -104,9 +104,9 @@ namespace QWERTYShop.Controllers
                 Data = new List<string>();
                 for (int i = 0; dataReader.Read(); i++)
                 {
-                    Data.Add("ID: "+dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                        dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString() 
-                        +" cost: "+ dataReader[6].ToString()+"\r\n");
+                    Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                        dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                        + " cost: " + dataReader[6].ToString() + "\r\n");
                 }
                 connection.Close();
             }
@@ -126,32 +126,32 @@ namespace QWERTYShop.Controllers
             string previousCommand = currentModel;
             if (currentModel == "Remove")
             {
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand("DELETE FROM public.cards WHERE ID=(SELECT MAX(id) FROM cards)", connection);
-                command.ExecuteNonQuery();
-                connection.Close();
-            }
-
-            List<string> Data;
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
-                NpgsqlDataReader dataReader = command.ExecuteReader();
-                Data = new List<string>();
-                for (int i = 0; dataReader.Read(); i++)
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                 {
-                    Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                        dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                        + " cost: " + dataReader[6].ToString() + "\r\n");
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("DELETE FROM public.cards WHERE ID=(SELECT MAX(id) FROM cards)", connection);
+                    command.ExecuteNonQuery();
+                    connection.Close();
                 }
-                connection.Close();
-            }
-            ViewBag.Data = Data;
-            Data = null;
-            return View();
+
+                List<string> Data;
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
+                    NpgsqlDataReader dataReader = command.ExecuteReader();
+                    Data = new List<string>();
+                    for (int i = 0; dataReader.Read(); i++)
+                    {
+                        Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+                            dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+                            + " cost: " + dataReader[6].ToString() + "\r\n");
+                    }
+                    connection.Close();
+                }
+                ViewBag.Data = Data;
+                Data = null;
+                return View();
             } //удаление последней строки
 
             if (currentModel == "ID")
@@ -269,6 +269,119 @@ namespace QWERTYShop.Controllers
             }
 
             return View();
+        }
+
+        public ActionResult PurchaseManagment()
+        {
+            List<PurchaseManagmentModels> Data = new List<PurchaseManagmentModels>();
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("SELECT id, condition FROM public.currentpurchase", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                for (int i = 0; dataReader.Read(); i++)
+                {
+                    Data.Add(new PurchaseManagmentModels { Id = dataReader.GetInt32(0), Condition = dataReader.GetString(1) });
+                }
+                connection.Close();
+            }
+            Data = Data.OrderBy(x => x.Id).ToList();
+            ViewBag.Data = Data;
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult PurchaseManagment(PurchaseManagmentModels model)
+        {
+            int idToChange = model.Id;
+            string currentCondition = model.Condition;
+            string nextCondition = "";
+            string type = GetTypeOfPurchase(model.Id);
+
+            if (currentCondition == "handles")
+                nextCondition = "delivers";
+
+            if (currentCondition == "delivers" && type == "Самовывоз")
+                nextCondition = "ready to pickup";
+
+            if (currentCondition == "delivers" && type == "Доставка до квартиры")
+                nextCondition = "finished";
+
+            if (currentCondition == "ready to pickup")
+                nextCondition = "finished";
+
+            if (nextCondition == "finished")
+            {
+                string purchase = "";
+
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command=new NpgsqlCommand($"select purchase from currentpurchase where id = {idToChange}", connection);
+                    NpgsqlDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        purchase = dataReader.GetString(0);
+                    }
+                    connection.Close();
+                    connection.Open();
+                    NpgsqlCommand command2 = new NpgsqlCommand($"delete from currentpurchase where id={idToChange}", connection);
+                    command2.ExecuteNonQuery();
+                    NpgsqlCommand command3=new NpgsqlCommand($"update finishedpurchases set purchase='{purchase}', finishedtime='{DateTime.Now}', finished={true} where id={idToChange}", connection);
+                    command3.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            else
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command = new NpgsqlCommand($"update currentpurchase set condition='{nextCondition}' where id={idToChange}", connection);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+
+            List<PurchaseManagmentModels> Data = new List<PurchaseManagmentModels>();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("SELECT id, condition FROM public.currentpurchase", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                for (int i = 0; dataReader.Read(); i++)
+                {
+                    Data.Add(new PurchaseManagmentModels { Id = dataReader.GetInt32(0), Condition = dataReader.GetString(1) });
+                }
+
+                Data = Data.OrderBy(x => x.Id).ToList();
+                connection.Close();
+            }
+
+            ViewBag.Data = Data;
+
+            return View();
+        }
+
+        private string GetTypeOfPurchase(int id)
+        {
+            string type = "";
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"SELECT typeofdelivery FROM public.currentpurchase where id={id}", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+
+                for (int i = 0; dataReader.Read(); i++)
+                {
+                    type = dataReader.GetString(0);
+                }
+                connection.Close();
+            }
+
+            return type;
         }
     }
 

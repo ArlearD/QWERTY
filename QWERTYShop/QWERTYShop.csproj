@@ -214,6 +214,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ManagmentSortModels.cs" />
     <Compile Include="Models\PaymentModels.cs" />
+    <Compile Include="Models\PurchaseManagmentModels.cs" />
     <Compile Include="Models\PurchaseModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -276,6 +277,7 @@
     <Content Include="Views\Home\Success.cshtml" />
     <Content Include="Views\Home\Payment.cshtml" />
     <Content Include="Views\Home\PurchaseData.cshtml" />
+    <Content Include="Views\Managment\PurchaseManagment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

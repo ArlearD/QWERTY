@@ -15,7 +15,6 @@ create table finishedpurchases
     id serial,
     purchase varchar,
     finishedtime timestamp,
-    clientid bigint,
     finished bool
 );
 
@@ -25,5 +24,6 @@ create table currentpurchase
 	id serial,
 	purchase varchar,
 	condition varchar,
-	Paid bool
+	paid bool,
+	typeofdelivery varchar
 );

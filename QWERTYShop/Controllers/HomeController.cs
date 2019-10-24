@@ -359,18 +359,18 @@ namespace QWERTYShop.Controllers
                 connection.Open();
                 NpgsqlCommand command =
                     new NpgsqlCommand(
-                        "INSERT INTO public.currentpurchase(id,purchase, condition, paid) values(@i,@p, @c, @paid)", connection);
+                        "INSERT INTO public.currentpurchase(id,purchase, condition, paid, typeofdelivery) values(@i,@p, @c, @paid, @t)", connection);
 
                 command.Parameters.AddWithValue("i", GetNextIdOfPurchases());
                 command.Parameters.AddWithValue("p", Session["Cart"]);
                 command.Parameters.AddWithValue("c", "handles");
                 command.Parameters.AddWithValue("paid", isPaid);
+                command.Parameters.AddWithValue("t", Session["Delivery"].ToString());
                 command.ExecuteNonQuery();
 
-                NpgsqlCommand command2 = new NpgsqlCommand("INSERT INTO public.finishedpurchases(id, clientid) " +
-                                                           "values(@i,@c)", connection);
+                NpgsqlCommand command2 = new NpgsqlCommand("INSERT INTO public.finishedpurchases(id) " +
+                                                           "values(@i)", connection);
                 command2.Parameters.AddWithValue("i", GetNextIdOfPurchases());
-                command2.Parameters.AddWithValue("c", User.Identity.GetUserId().AsInt());
                 command2.ExecuteNonQuery();
                 connection.Close();
             }
@@ -407,8 +407,8 @@ namespace QWERTYShop.Controllers
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("qwertyshop.purchase@gmail.com", "1234QWER+");
-            client.Send("qwertyshop.purchase@gmail.com", Session["PurchaseMail"].ToString(), "Заказ успешно оформлен!", information);
+            client.Credentials = new NetworkCredential("qqwertyshop@gmail.com", "1234QWER+");
+            client.Send("qqwertyshop@gmail.com", Session["PurchaseMail"].ToString(), "Заказ успешно оформлен!", information);
 
             return View();
         }
