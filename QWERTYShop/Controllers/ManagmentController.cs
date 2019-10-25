@@ -91,10 +91,6 @@ namespace QWERTYShop.Controllers
         {
             return View();
         }
-        //"ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-        //dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-        //    + " cost: " + dataReader[6].ToString() + "\r\n");
-
 
         [HttpGet]
         public ActionResult Presentation()

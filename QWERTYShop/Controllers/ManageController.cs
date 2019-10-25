@@ -111,7 +111,20 @@ namespace QWERTYShop.Controllers
             base.Dispose(disposing);
         }
 
-#region Вспомогательные приложения
+        public ActionResult CurrentOrders()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CurrentOrders(CurrentOrdersCheckModels model)
+        {
+            
+
+            return View();
+        }
+
+        #region Вспомогательные приложения
         // Используется для защиты от XSRF-атак при добавлении внешних имен входа
         private const string XsrfKey = "XsrfId";
 

@@ -25,5 +25,6 @@ create table currentpurchase
 	purchase varchar,
 	condition varchar,
 	paid bool,
-	typeofdelivery varchar
+	typeofdelivery varchar,
+	mail varchar
 );

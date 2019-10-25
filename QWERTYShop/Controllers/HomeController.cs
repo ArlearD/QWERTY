@@ -359,13 +359,14 @@ namespace QWERTYShop.Controllers
                 connection.Open();
                 NpgsqlCommand command =
                     new NpgsqlCommand(
-                        "INSERT INTO public.currentpurchase(id,purchase, condition, paid, typeofdelivery) values(@i,@p, @c, @paid, @t)", connection);
+                        "INSERT INTO public.currentpurchase(id,purchase, condition, paid, typeofdelivery, mail) values(@i,@p, @c, @paid, @t, @m)", connection);
 
                 command.Parameters.AddWithValue("i", GetNextIdOfPurchases());
                 command.Parameters.AddWithValue("p", Session["Cart"]);
                 command.Parameters.AddWithValue("c", "handles");
                 command.Parameters.AddWithValue("paid", isPaid);
                 command.Parameters.AddWithValue("t", Session["Delivery"].ToString());
+                command.Parameters.AddWithValue("m", Session["Mail"].ToString());
                 command.ExecuteNonQuery();
 
                 NpgsqlCommand command2 = new NpgsqlCommand("INSERT INTO public.finishedpurchases(id) " +
@@ -484,6 +485,8 @@ namespace QWERTYShop.Controllers
             ViewBag.AvailableDatesOfDelivery = availableDatesOfDelivery;
 
             GetInformation(model);
+
+            Session["Mail"] = model.Mail;
 
             if (ModelState.IsValid && model.Payment == "Оплата онлайн")
             {

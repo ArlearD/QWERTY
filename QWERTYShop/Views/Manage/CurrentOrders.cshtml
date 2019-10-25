@@ -1,0 +1,18 @@
+﻿@model QWERTYShop.Models.CurrentOrdersCheckModels
+@{
+    ViewBag.Title = "CurrentOrders";
+}
+
+<h2>Текущие заказы</h2>
+<form method="post">
+    @Html.LabelFor(x=>x.Mail)
+    @Html.ValidationMessageFor(x=>x.Mail)
+    @Html.TextBoxFor(x=>x.Mail)<br/>
+    @Html.LabelFor(x=>x.Id)
+    @Html.ValidationMessageFor(x=>x.Id)
+    @Html.TextBoxFor(x=>x.Id)<br/>
+    <input type="submit" value="получить!"/>
+</form>
+
+
+
