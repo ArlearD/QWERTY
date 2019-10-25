@@ -352,7 +352,7 @@ namespace QWERTYShop.Controllers
 
         public ActionResult Success()
         {
-            bool isPaid = Session["Paid"] == "true";
+            bool isPaid = Session["Paid"].ToString() == "true";
             ViewBag.Id = GetNextIdOfPurchases();
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
@@ -376,7 +376,7 @@ namespace QWERTYShop.Controllers
             }
 
             string information = "";
-            if (Session["Delivery"].ToString() == "Самовывоз" && Session["Paid"] == "true")
+            if (Session["Delivery"].ToString() == "Самовывоз" && Session["Paid"].ToString() == "true")
             {
                 information = $"Выбранный Вами тип получения товара - самовывоз, приходите в пункт самовывоза " +
                               $"{Session["PickupDate"].ToString().Split(' ')[0]}, часы работы:{Session["PickupDate"].ToString().Split(' ')[1]}";
@@ -387,7 +387,7 @@ namespace QWERTYShop.Controllers
                               $"{Session["PickupDate"].ToString().Split(' ')[0]}, часы работы:{Session["PickupDate"].ToString().Split(' ')[1]}" +
                               $" Напоминаем, что сумма Вашего заказа составляет {Session["Price"]}";
             }
-            else if (Session["Delivery"].ToString() == "Доставка до квартиры" && Session["Paid"] == "true")
+            else if (Session["Delivery"].ToString() == "Доставка до квартиры" && Session["Paid"].ToString() == "true")
             {
                 information = $"Выбранный Вами тип получения товара - доставка до квартиры. Ожидайте нашего курьера " +
                               $"{Session["DeliveryDate"].ToString().Split(' ')[0]}, время доставки: {Session["DeliveryTime"].ToString()}";
@@ -407,8 +407,8 @@ namespace QWERTYShop.Controllers
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("qqwertyshop@gmail.com", "1234QWER+");
-            client.Send("qqwertyshop@gmail.com", Session["PurchaseMail"].ToString(), "Заказ успешно оформлен!", information);
+            client.Credentials = new NetworkCredential("qqqwertyshop@gmail.com", "1234QWER+");
+            client.Send("qqqwertyshop@gmail.com", Session["PurchaseMail"].ToString(), "Заказ успешно оформлен!", information);
 
             return View();
         }

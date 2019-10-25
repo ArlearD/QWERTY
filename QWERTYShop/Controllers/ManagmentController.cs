@@ -91,27 +91,15 @@ namespace QWERTYShop.Controllers
         {
             return View();
         }
+        //"ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
+        //dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
+        //    + " cost: " + dataReader[6].ToString() + "\r\n");
+
 
         [HttpGet]
         public ActionResult Presentation()
         {
-            List<string> Data;
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
-                NpgsqlDataReader dataReader = command.ExecuteReader();
-                Data = new List<string>();
-                for (int i = 0; dataReader.Read(); i++)
-                {
-                    Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                        dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                        + " cost: " + dataReader[6].ToString() + "\r\n");
-                }
-                connection.Close();
-            }
-            ViewBag.Data = Data;
-            Data = null;
+            OutputPresentationSort();
             return View();
         }
 
@@ -123,7 +111,6 @@ namespace QWERTYShop.Controllers
             if (model.Type != null) currentModel = model.Type;
             if (model.Remove != null) currentModel = model.Remove;
             if (model.Name != null) currentModel = model.Name;
-            string previousCommand = currentModel;
             if (currentModel == "Remove")
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
@@ -134,43 +121,19 @@ namespace QWERTYShop.Controllers
                     connection.Close();
                 }
 
-                List<string> Data;
-                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-                {
-                    connection.Open();
-                    NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
-                    NpgsqlDataReader dataReader = command.ExecuteReader();
-                    Data = new List<string>();
-                    for (int i = 0; dataReader.Read(); i++)
-                    {
-                        Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                            dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                            + " cost: " + dataReader[6].ToString() + "\r\n");
-                    }
-                    connection.Close();
-                }
-                ViewBag.Data = Data;
-                Data = null;
+                OutputPresentationSort();
                 return View();
             } //удаление последней строки
 
             if (currentModel == "ID")
             {
-                List<string> Data = new List<string>();
-                if (model.isIdDescending)
+                if (model.isDescending)
                 {
                     using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                     {
                         connection.Open();
                         NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY id desc", connection);
-                        NpgsqlDataReader dataReader = command.ExecuteReader();
-                        for (int i = 0; dataReader.Read(); i++)
-                        {
-                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                                + " cost: " + dataReader[6].ToString() + "\r\n");
-                        }
-                        connection.Close();
+                        OutputPresentationSortedBy(command, connection);
                     }
                 }
                 else
@@ -179,36 +142,20 @@ namespace QWERTYShop.Controllers
                     {
                         connection.Open();
                         NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY id asc", connection);
-                        NpgsqlDataReader dataReader = command.ExecuteReader();
-                        for (int i = 0; dataReader.Read(); i++)
-                        {
-                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                                + " cost: " + dataReader[6].ToString() + "\r\n");
-                        }
-                        connection.Close();
+                        OutputPresentationSortedBy(command, connection);
                     } //сортировка по ID
                 }
-                ViewBag.Data = Data;
             }
 
             if (currentModel == "Type")
             {
-                List<string> Data = new List<string>();
-                if (model.isTypeDescending)
+                if (model.isDescending)
                 {
                     using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                     {
                         connection.Open();
                         NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY type desc", connection);
-                        NpgsqlDataReader dataReader = command.ExecuteReader();
-                        for (int i = 0; dataReader.Read(); i++)
-                        {
-                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                                + " cost: " + dataReader[6].ToString() + "\r\n");
-                        }
-                        connection.Close();
+                        OutputPresentationSortedBy(command, connection);
                     }
                 }
                 else
@@ -217,36 +164,20 @@ namespace QWERTYShop.Controllers
                     {
                         connection.Open();
                         NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY type asc", connection);
-                        NpgsqlDataReader dataReader = command.ExecuteReader();
-                        for (int i = 0; dataReader.Read(); i++)
-                        {
-                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                                + " cost: " + dataReader[6].ToString() + "\r\n");
-                        }
-                        connection.Close();
+                        OutputPresentationSortedBy(command, connection);
                     } //сортировка по Type
                 }
-                ViewBag.Data = Data;
             }
 
             if (currentModel == "Name")
             {
-                List<string> Data = new List<string>();
-                if (model.isNameDescending)
+                if (model.isDescending)
                 {
                     using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                     {
                         connection.Open();
                         NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY name desc", connection);
-                        NpgsqlDataReader dataReader = command.ExecuteReader();
-                        for (int i = 0; dataReader.Read(); i++)
-                        {
-                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                                + " cost: " + dataReader[6].ToString() + "\r\n");
-                        }
-                        connection.Close();
+                        OutputPresentationSortedBy(command, connection);
                     }
                 }
                 else
@@ -255,19 +186,10 @@ namespace QWERTYShop.Controllers
                     {
                         connection.Open();
                         NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards ORDER BY name asc", connection);
-                        NpgsqlDataReader dataReader = command.ExecuteReader();
-                        for (int i = 0; dataReader.Read(); i++)
-                        {
-                            Data.Add("ID: " + dataReader[0].ToString() + ", name: " + dataReader[1].ToString() + ", type: " + dataReader[2].ToString() + ", added time: " +
-                                dataReader[3].ToString() + ", image: " + dataReader[4].ToString() + ", information: " + dataReader[5].ToString()
-                                + " cost: " + dataReader[6].ToString() + "\r\n");
-                        }
-                        connection.Close();
-                    } //сортировка по ID
+                        OutputPresentationSortedBy(command, connection);
+                    } //сортировка по названию
                 }
-                ViewBag.Data = Data;
             }
-
             return View();
         }
 
@@ -318,7 +240,7 @@ namespace QWERTYShop.Controllers
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                 {
                     connection.Open();
-                    NpgsqlCommand command=new NpgsqlCommand($"select purchase from currentpurchase where id = {idToChange}", connection);
+                    NpgsqlCommand command = new NpgsqlCommand($"select purchase from currentpurchase where id = {idToChange}", connection);
                     NpgsqlDataReader dataReader = command.ExecuteReader();
                     while (dataReader.Read())
                     {
@@ -328,7 +250,7 @@ namespace QWERTYShop.Controllers
                     connection.Open();
                     NpgsqlCommand command2 = new NpgsqlCommand($"delete from currentpurchase where id={idToChange}", connection);
                     command2.ExecuteNonQuery();
-                    NpgsqlCommand command3=new NpgsqlCommand($"update finishedpurchases set purchase='{purchase}', finishedtime='{DateTime.Now}', finished={true} where id={idToChange}", connection);
+                    NpgsqlCommand command3 = new NpgsqlCommand($"update finishedpurchases set purchase='{purchase}', finishedtime='{DateTime.Now}', finished={true} where id={idToChange}", connection);
                     command3.ExecuteNonQuery();
                     connection.Close();
                 }
@@ -382,6 +304,57 @@ namespace QWERTYShop.Controllers
             }
 
             return type;
+        }
+
+        private void OutputPresentationSort()
+        {
+            List<ManagmentSortModels> Data;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM public.cards", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                Data = new List<ManagmentSortModels>();
+                for (int i = 0; dataReader.Read(); i++)
+                {
+                    Data.Add(new ManagmentSortModels
+                    {
+                        Id = dataReader.GetInt64(0).ToString(),
+                        Name = dataReader.GetString(1),
+                        Type = dataReader.GetString(2),
+                        AddedTime = dataReader.GetDateTime(3).ToString(),
+                        Image = dataReader.GetString(4),
+                        Information = dataReader.GetString(5),
+                        Cost = dataReader.GetInt32(6).ToString()
+                    });
+                }
+                connection.Close();
+            }
+            ViewBag.Data = Data;
+        }
+
+        private void OutputPresentationSortedBy(NpgsqlCommand command, NpgsqlConnection connection)
+        {
+            List<ManagmentSortModels> Data;
+
+            NpgsqlDataReader dataReader = command.ExecuteReader();
+            Data = new List<ManagmentSortModels>();
+            for (int i = 0; dataReader.Read(); i++)
+            {
+                Data.Add(new ManagmentSortModels
+                {
+                    Id = dataReader.GetInt64(0).ToString(),
+                    Name = dataReader.GetString(1),
+                    Type = dataReader.GetString(2),
+                    AddedTime = dataReader.GetDateTime(3).ToString(),
+                    Image = dataReader.GetString(4),
+                    Information = dataReader.GetString(5),
+                    Cost = dataReader.GetInt32(6).ToString()
+                });
+            }
+
+            connection.Close();
+            ViewBag.Data = Data;
         }
     }
 
