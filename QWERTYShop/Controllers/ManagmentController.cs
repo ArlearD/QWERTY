@@ -3,6 +3,8 @@ using QWERTYShop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -216,18 +218,47 @@ namespace QWERTYShop.Controllers
             string currentCondition = model.Condition;
             string nextCondition = "";
             string type = GetTypeOfPurchase(model.Id);
+            string mail = "";
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command =
+                    new NpgsqlCommand($"select mail from currentpurchase where id = {idToChange}", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    mail = dataReader.GetString(0);
+                }
+            }
 
             if (currentCondition == "handles")
+            {
                 nextCondition = "delivers";
+                string information = "Ваш заказ доставляется!";
+                SendEmail(information, mail);
+            }
 
             if (currentCondition == "delivers" && type == "Самовывоз")
+            {
                 nextCondition = "ready to pickup";
+                string information = "Ваш заказ доставлен до точки самовывоза и готов к нему!";
+                SendEmail(information, mail);
+            }
 
             if (currentCondition == "delivers" && type == "Доставка до квартиры")
+            {
                 nextCondition = "finished";
+                string information = "Спасибо, что воспользовались нашим интернет магазином! Ждём Вас снова!";
+                SendEmail(information, mail);
+            }
+
 
             if (currentCondition == "ready to pickup")
+            {
                 nextCondition = "finished";
+                string information = "Спасибо, что воспользовались нашим интернет магазином! Ждём Вас снова!";
+                SendEmail(information, mail);
+            }
 
             if (nextCondition == "finished")
             {
@@ -352,7 +383,18 @@ namespace QWERTYShop.Controllers
             connection.Close();
             ViewBag.Data = Data;
         }
-    }
 
+        private void SendEmail(string information, string mail)
+        {
+            SmtpClient client = new SmtpClient();
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("qqqwertyshop@gmail.com", "1234QWER+");
+            client.Send("qqqwertyshop@gmail.com", mail, "Заказ успешно оформлен!", information);
+        }
+    }
 
 }

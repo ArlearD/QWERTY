@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -6,6 +7,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Npgsql;
 using QWERTYShop.Models;
 
 namespace QWERTYShop.Controllers
@@ -13,6 +15,8 @@ namespace QWERTYShop.Controllers
     [Authorize]
     public class ManageController : Controller
     {
+        private readonly string ConnectionString =
+            "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
         #region manager
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
@@ -33,9 +37,9 @@ namespace QWERTYShop.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -119,7 +123,43 @@ namespace QWERTYShop.Controllers
         [HttpPost]
         public ActionResult CurrentOrders(CurrentOrdersCheckModels model)
         {
-            
+            var Data = new List<CurrentOrdersCheckModels>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand($"select * from currentpurchase where id={model.Id} and mail='{model.Mail}'", connection))
+                {
+                    if (command.ExecuteScalar() != null) //проверка на пустой ответ
+                    {
+                        var reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                            while (reader.Read())
+                            {
+                                Data.Add(new CurrentOrdersCheckModels
+                                {
+                                    Id = reader.GetInt64(0),
+                                    Purchase = reader.GetString(1),
+                                    Condition = reader.GetString(2),
+                                    Paid = reader.GetBoolean(3),
+                                    Delivery = reader.GetString(4),
+                                    Mail = reader.GetString(5)
+                                });
+                            }
+                    }
+                }
+                ViewBag.CurrentOrders = Data;
+            }
+
+            if (Data.Count == 0)
+            {
+                ViewBag.CurrentOrders = null;
+                ViewBag.NotFound = "Не найдено!";
+            }
+            else
+            {
+                ViewBag.NotFound = "";
+            }
+                
 
             return View();
         }
@@ -175,6 +215,6 @@ namespace QWERTYShop.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }
