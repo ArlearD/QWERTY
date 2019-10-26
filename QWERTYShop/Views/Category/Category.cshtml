@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Category";
+}
+
+<h2>@ViewBag.category</h2>
+
+@foreach (var element in ViewBag.cards)
+{
+    <p>@element <input class="buttons" value="Добавить в корзину" type="submit" onClick='location.href="http://localhost:52905/AddToCard/@element.Id"' />
+                <input class="buttons" value="Подробнее" type="submit" onClick='location.href="http://localhost:52905/Card/@element.Id"' /></p>
+}
+

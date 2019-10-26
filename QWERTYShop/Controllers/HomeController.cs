@@ -22,10 +22,12 @@ namespace QWERTYShop.Controllers
         public ActionResult Index()
         {
             var Data = new List<CardsModels>();
+            var Caterogies = new List<CategoryModels>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand("SELECT * FROM public.cards;", connection))
+                using (var command =
+                    new NpgsqlCommand("select * from cards order by addedtime desc limit(3);", connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
@@ -41,9 +43,25 @@ namespace QWERTYShop.Controllers
                             Data.Add(card);
                         }
                 }
+
                 ViewBag.Cards = Data;
             }
 
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand("select distinct type from cards;", connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            Caterogies.Add(new CategoryModels {Type = reader.GetString(0)});
+                        }
+
+                    ViewBag.Categories = Caterogies;
+                }
+            }
             return View();
         }
 
@@ -68,9 +86,8 @@ namespace QWERTYShop.Controllers
                             card.Cost = reader.GetInt32(6);
                         }
                 }
-
-                return View(card);
             }
+            return View(card);
         }
 
         public ActionResult Card()

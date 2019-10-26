@@ -199,6 +199,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ManagmentController.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Models\AddNewCityModels.cs" />
     <Compile Include="Models\CardsModels.cs" />
     <Compile Include="Models\CartModels.cs" />
+    <Compile Include="Models\CategoryModels.cs" />
     <Compile Include="Models\CityModels.cs" />
     <Compile Include="Models\CurrentOrdersCheckModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -281,6 +283,7 @@
     <Content Include="Views\Managment\PurchaseManagment.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\CurrentOrders.cshtml" />
+    <Content Include="Views\Category\Category.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

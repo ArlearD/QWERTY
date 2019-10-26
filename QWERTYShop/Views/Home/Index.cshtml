@@ -1,80 +1,105 @@
-﻿<h1>Новинки:</h1>
-
-
+﻿<h1 style="text-align:center">Новинки:</h1>
 <div class="conatiner">
     <div class="wrap">
         @foreach (var element in @ViewBag.Cards)
         {
-                <div class="box two">
-                    <div class="name">
-                        <h4>
-                            @element.Name
-                        </h4>
-                    </div>
-                    <H1>@Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</H1>
+            <div class="product-item">
+                <img src="https://source.unsplash.com/270x400">
+                <div class="product-list">
+                    <h3>@element.Name</h3>
+                    <span class="price">₽ @element.Cost</span>
+                    <h4>@Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</h4>
                 </div>
-            @*<p>@element @Html.ActionLink("Содержимое карточки", "Card", "Home", new { id = element.Id }, null) @Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</p>*@
+            </div>
         }
     </div>
-    </div>
+</div>
+
+@foreach (var element in ViewBag.Categories)
+{
+    <input class="buttons" value="@element.Type" type="submit" onClick='location.href="http://localhost:52905/category/@element.Type"' />
+}
 
 
+<style>
 
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
+    .product-item {
+        width: 300px;
+        text-align: center;
+        margin: 0 auto;
+        border-bottom: 2px solid #F5F5F5;
+        background: white;
+        font-family: "Open Sans";
+        transition: .3s ease-in;
+    }
 
-        .conatiner {
+        .product-item:hover {
+            border-bottom: 2px solid #fc5a5a;
+        }
+
+        .product-item img {
+            display: block;
             width: 100%;
         }
 
-        .wrap {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-            -webkit-box-pack: center;
-            -ms-flex-pack: center;
-            justify-content: center;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            align-items: center;
-            -webkit-box-orient: horizontal;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-            flex-direction: row;
+    .product-list {
+        background: #fafafa;
+        padding: 15px 0;
+    }
+
+        .product-list h3 {
+            font-size: 18px;
+            font-weight: 400;
+            color: #444444;
+            margin: 0 0 10px 0;
         }
 
-        .box {
-            margin: 10px;
-            width: 300px;
-            height: 400px;
-            text-align: center;
-            border-radius: 3px;
-            -webkit-transition: 200ms ease-in-out;
-            -o-transition: 200ms ease-in-out;
-            transition: 200ms ease-in-out;
-            -webkit-box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-            background: url('https://source.unsplash.com/820x900');
-        }
+    .price {
+        font-size: 16px;
+        color: #fc5a5a;
+        display: block;
+        margin-bottom: 12px;
+    }
 
-            .box:hover {
-                margin-top: 2px;
-                -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.7);
-                box-shadow: 0 0 5px rgba(0,0,0,0.7);
-            }
+    .button {
+        text-decoration: none;
+        display: inline-block;
+        padding: 0 12px;
+        background: #cccccc;
+        color: white;
+        text-transform: uppercase;
+        font-size: 12px;
+        line-height: 28px;
+        transition: .3s ease-in;
+    }
 
+    .product-item:hover .button {
+        background: #fc5a5a;
+    }
 
-        .name h4 {
-            color: #fff;
-            font-weight: 300;
-            text-align: center;
-            letter-spacing: 3px;
-            text-shadow: 0 0 3px rgba(0,0,0,0.9);
-            background: rgba(0,0,0,0.3);
-        }
-    </style>
+    .conatiner {
+        width: 100%;
+    }
+
+    .wrap {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+        flex-direction: row;
+    }
+</style>
