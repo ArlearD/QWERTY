@@ -25,7 +25,7 @@ namespace QWERTYShop.Controllers
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand("SELECT * FROM public.cards;", connection))
+                using (var command = new NpgsqlCommand("select * from cards order by addedtime desc limit(3);", connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
