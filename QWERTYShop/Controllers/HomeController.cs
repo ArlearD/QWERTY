@@ -56,7 +56,7 @@ namespace QWERTYShop.Controllers
                     if (reader.HasRows)
                         while (reader.Read())
                         {
-                            Caterogies.Add(new CategoryModels {Type = reader.GetString(0)});
+                            Caterogies.Add(new CategoryModels { Type = reader.GetString(0) });
                         }
 
                     ViewBag.Categories = Caterogies;
@@ -66,7 +66,7 @@ namespace QWERTYShop.Controllers
         }
 
         [Route("card/{id}")]
-        public ActionResult Card(long? id)
+        public ActionResult Card(long id) //ТУТ был "long?" вместо "long"
         {
             var card = new CardsModels();
             using (var connection = new NpgsqlConnection(ConnectionString))
@@ -87,6 +87,7 @@ namespace QWERTYShop.Controllers
                         }
                 }
             }
+            ViewBag.AverageMark = GetAverageMark(id);
             return View(card);
         }
 
@@ -550,6 +551,85 @@ namespace QWERTYShop.Controllers
                 connection.Close();
             }
             return currMax + 1;
+        }
+
+        [Route("card/{id}/commentaries")]
+        public ActionResult Commentaries()
+        {
+            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
+            return View();
+        }
+
+        [Route("card/{id}/commentaries")]
+        [HttpPost]
+        public ActionResult Commentaries(CommentariesModels model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.Time = DateTime.Today;
+                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    NpgsqlCommand command =
+                        new NpgsqlCommand(
+                            $"INSERT INTO commentaries values('{model.UserName}', '{model.Comment}', '{model.Time}', {model.Id}, {model.Mark} )", connection);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
+
+            return View();
+        }
+
+        private void GetCommentaries(long id)
+        {
+            List<CommentariesModels> data = new List<CommentariesModels>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"SELECT * FROM commentaries where id={id};",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            data.Add(new CommentariesModels
+                            {
+                                UserName = reader.GetString(0),
+                                Comment = reader.GetString(1),
+                                Time = reader.GetDateTime(2),
+                                Id = reader.GetInt64(3),
+                                Mark = reader.GetInt32(4)
+                            });
+                        }
+                }
+            }
+            ViewBag.Commentaries = data;
+        }
+
+        private float GetAverageMark(long id)
+        {
+            float avg = -1;
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"Select avg(mark) from(SELECT mark FROM commentaries where id={id}) as a;",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            if (!reader.IsDBNull(0))
+                                avg = reader.GetFloat(0);
+                        }
+                }
+            }
+            return avg;
         }
     }
 }

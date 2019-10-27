@@ -28,3 +28,11 @@ create table currentpurchase
 	typeofdelivery varchar,
 	mail varchar
 );
+create table commentaries
+(
+    username varchar,
+    comment text,
+    time date,
+    id bigint,
+    mark int
+);

@@ -212,6 +212,7 @@
     <Compile Include="Models\CartModels.cs" />
     <Compile Include="Models\CategoryModels.cs" />
     <Compile Include="Models\CityModels.cs" />
+    <Compile Include="Models\CommentariesModels.cs" />
     <Compile Include="Models\CurrentOrdersCheckModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -285,6 +286,7 @@
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\CurrentOrders.cshtml" />
     <Content Include="Views\Category\Category.cshtml" />
+    <Content Include="Views\Home\Commentaries.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

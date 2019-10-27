@@ -8,8 +8,18 @@
 <p>@Model.Image</p>
 <p>@Model.Information</p>
 <p>@Model.Cost</p>
+@if (ViewBag.AverageMark != -1)
+{
+<p>средняя оценка покупателей составляет @ViewBag.AverageMark</p>
+}
+else
+{
+    <p>оценок на данный товар еще нет</p>
+}
 
 <input class="buttons" value="Купить" type="submit" onClick='location.href="http://localhost:52905/AddToCard/@Model.Id"' />
+
+<input class="buttons" value="Отзывы" type="submit" onClick='location.href="http://localhost:52905/card/@Model.Id/commentaries"' />
 
 <style>
     input.buttons {
