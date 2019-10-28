@@ -652,6 +652,7 @@ namespace QWERTYShop.Controllers
                     if (reader.HasRows)
                         while (reader.Read())
                         {
+                            if(!reader.IsDBNull(1))
                             data.Add(new PurchasedProductsModels { Id = reader.GetInt64(0), PurchasedProducts = reader.GetString(1) });
                         }
                 }
