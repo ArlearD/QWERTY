@@ -273,11 +273,29 @@ namespace QWERTYShop.Controllers
                     {
                         purchase = dataReader.GetString(0);
                     }
+
+                    var purchasedProductsArr = purchase.Split(',');
+
+                    string purchasedProducts = "";
+
+                    for (int i = 0; i < purchasedProductsArr.Length; i++)
+                    {
+                        if (i == purchasedProductsArr.Length - 1) //если последний элемент
+                        {
+                            purchasedProducts += purchasedProductsArr[i].Split(':')[0];
+                        }
+                        else
+                        {
+                            purchasedProducts += purchasedProductsArr[i].Split(':')[0] + ",";
+                        }
+                    }
+
                     connection.Close();
                     connection.Open();
                     NpgsqlCommand command2 = new NpgsqlCommand($"delete from currentpurchase where id={idToChange}", connection);
                     command2.ExecuteNonQuery();
-                    NpgsqlCommand command3 = new NpgsqlCommand($"update finishedpurchases set purchase='{purchase}', finishedtime='{DateTime.Now}', finished={true} where id={idToChange}", connection);
+                    NpgsqlCommand command3 = new NpgsqlCommand($"update finishedpurchases set purchase='{purchase}', " +
+                                                               $"finishedtime='{DateTime.Now}', finished={true}, purchasedproducts='{purchasedProducts}' where id={idToChange}", connection);
                     command3.ExecuteNonQuery();
                     connection.Close();
                 }

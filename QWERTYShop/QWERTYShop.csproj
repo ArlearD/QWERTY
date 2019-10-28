@@ -218,6 +218,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ManagmentSortModels.cs" />
     <Compile Include="Models\PaymentModels.cs" />
+    <Compile Include="Models\PurchasedProductsModels.cs" />
     <Compile Include="Models\PurchaseManagmentModels.cs" />
     <Compile Include="Models\PurchaseModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

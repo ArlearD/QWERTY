@@ -87,6 +87,12 @@ namespace QWERTYShop.Controllers
                         }
                 }
             }
+
+            var IdsToOutput = GetAdditionalIdProducts(id);
+            if (IdsToOutput.Count != 0)
+                CreateCardToBuyWith(IdsToOutput);
+            else ViewBag.PurchasedId = new List<CardsModels>();
+
             ViewBag.AverageMark = GetAverageMark(id);
             return View(card);
         }
@@ -630,6 +636,86 @@ namespace QWERTYShop.Controllers
                 }
             }
             return avg;
+        }
+
+        private List<long> GetAdditionalIdProducts(long id)
+        {
+            List<PurchasedProductsModels> data = new List<PurchasedProductsModels>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"Select id, purchasedproducts from finishedpurchases",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            data.Add(new PurchasedProductsModels { Id = reader.GetInt64(0), PurchasedProducts = reader.GetString(1) });
+                        }
+                }
+            }
+
+            List<long> idsToOutput = new List<long>();
+
+            foreach (var element in data)
+            {
+                var splited = element.PurchasedProducts.Split(',');
+                if (splited.Contains(id.ToString())) //?
+                {
+                    for (int i = 0; i < splited.Length; i++)
+                    {
+                        idsToOutput.Add(long.Parse(splited[i]));
+                    }
+                }
+            }
+
+            idsToOutput = idsToOutput.Distinct().Where(x => x != id).ToList();
+            return idsToOutput;
+        }
+
+        private void CreateCardToBuyWith(List<long> list)
+        {
+            List<CardsModels> data = new List<CardsModels>();
+
+            string commandStr = "select name, id, image, cost from cards where ";
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (i == list.Count - 1)
+                {
+                    commandStr += $"id={list[i]}";
+                }
+                else
+                {
+                    commandStr += $"id={list[i]} or ";
+                }
+            }
+
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand(commandStr, connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            data.Add(new CardsModels
+                            {
+                                Name = reader.GetString(0),
+                                Id = reader.GetInt64(1),
+                                Image = reader.GetString(2),
+                                Cost = reader.GetInt32(3)
+                            });
+                        }
+                }
+
+                ViewBag.PurchasedId = data;
+            }
+
         }
     }
 }
