@@ -14,7 +14,7 @@ namespace QWERTYShop.Controllers
     [Authorize(Roles = "admin")]
     public class ManagmentController : Controller
     {
-        string ConnectionString = "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
+        private string ConnectionString = Connection.ConnectionString;
         public ActionResult Index()
         {
             return View();

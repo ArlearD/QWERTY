@@ -8,7 +8,7 @@ namespace QWERTYShop.Controllers
     public class CategoryController : Controller
     {
         private readonly string ConnectionString =
-            "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
+            Connection.ConnectionString;
 
         [Route("category/{category}")]
         public ActionResult Category(string category)

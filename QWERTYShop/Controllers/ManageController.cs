@@ -16,7 +16,7 @@ namespace QWERTYShop.Controllers
     public class ManageController : Controller
     {
         private readonly string ConnectionString =
-            "Server = localhost; Port=5432; Database=postgres; User Id =postgres; Password=1234QWER+";
+            Connection.ConnectionString;
         #region manager
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
