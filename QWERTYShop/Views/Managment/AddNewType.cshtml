@@ -1,0 +1,21 @@
+﻿@model QWERTYShop.Models.CardsModels
+@{
+    ViewBag.Title = "AddNewType";
+}
+<h2>Добавление новой категории товара</h2>
+@ViewBag.Message
+
+<form method="post">
+    @Html.LabelFor(x=>x.Type)<br/>
+    <input type="text" name="Type" required=""/><br/><br/>
+    <input type="submit" value="Добавить"/><br/>
+</form><br/>
+<input class="buttons" value="Вернуться к управлению" type="button" onClick='location.href="http://localhost:52905/Managment/"' />
+<br />
+<br />
+<p>На данный момент уже есть следующие категории:</p>
+@foreach (var element in ViewBag.Types)
+{
+    @element<br/>
+}
+

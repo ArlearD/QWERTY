@@ -39,3 +39,5 @@ create table commentaries
     id bigint,
     mark int
 );
+
+create table types(type varchar, properties varchar[])

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -16,11 +17,6 @@ namespace QWERTYShop.Controllers
     {
         private string ConnectionString = Connection.ConnectionString;
         public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult AddNewCard()
         {
             return View();
         }
@@ -54,10 +50,17 @@ namespace QWERTYShop.Controllers
             return View();
         }
 
+        public ActionResult AddNewCard()
+        {
+            GetTypes();
+            return View();
+        }
+
         [HttpPost]
         public ActionResult AddNewCard(CardsModels cardsModels)
         {
             Thread.Sleep(50);
+            GetTypes();
             if (ModelState.IsValid)
             {
                 cardsModels.AddedTime = DateTime.Now;
@@ -413,6 +416,89 @@ namespace QWERTYShop.Controllers
             client.Credentials = new NetworkCredential("qqqwertyshop@gmail.com", "1234QWER+");
             client.Send("qqqwertyshop@gmail.com", mail, "Заказ успешно оформлен!", information);
         }
-    }
 
+        private void GetTypes()
+        {
+            List<string> data = new List<string>();
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"SELECT type FROM public.types", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    data.Add(dataReader.GetString(0));
+                }
+                connection.Close();
+            }
+
+            ViewBag.Types = data;
+        }
+
+        public ActionResult AddNewType()
+        {
+            ViewBag.Message = "";
+            GetTypes();
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddNewType(CardsModels model)
+        {
+            ViewBag.Message = "Успешно!";
+            AddNewType(model.Type);
+            GetTypes();
+            return View();
+        }
+
+        private void AddNewType(string type)
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type) values('{type}')", connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        public ActionResult AddPropertiesToType()
+        {
+            GetTypes();
+            ViewBag.Message = "";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddPropertiesToType(AddPropertiesToTypeModels model)
+        {
+            GetTypes();
+            AddPropertiesToType(model.Properties, model.Type);
+            ViewBag.Message = "Успешно!";
+            return View();
+        }
+
+        private void AddPropertiesToType(string properties, string type)
+        {
+            var propertiesArr = properties.Split(',');
+            for (int i = 0; i < propertiesArr.Length; i++)
+            {
+                if (char.IsWhiteSpace(propertiesArr[i][0]))
+                    propertiesArr[i] = propertiesArr[i].Remove(0, 1);
+                if (char.IsWhiteSpace(propertiesArr[i][propertiesArr[i].Length - 1]))
+                    propertiesArr[i] = propertiesArr[i].Remove(propertiesArr[i].Length - 1, 1);
+            }
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("UPDATE types SET properties = @p WHERE type=@t", connection);
+                command.Parameters.AddWithValue("t", type);
+                command.Parameters.AddWithValue("p", propertiesArr);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+    }
 }
