@@ -23,6 +23,7 @@ namespace QWERTYShop.Controllers
 
         public ActionResult AddNewCity()
         {
+            GetViewOfCity();
             return View();
         }
 
@@ -47,6 +48,7 @@ namespace QWERTYShop.Controllers
             {
                 @ViewBag.AddNewCitySuccess = "Что-то пошло не так, попробуйте снова!";
             }
+            GetViewOfCity();
             return View();
         }
 
@@ -90,6 +92,19 @@ namespace QWERTYShop.Controllers
                 }
             }
             return View();
+        }
+
+        [Route("RemoveCity/{city}")]
+        public ActionResult RemoveCity(string city)
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command=new NpgsqlCommand($"delete from citylist where city='{city}'",connection);
+                command.ExecuteNonQuery();
+            }
+
+            return RedirectToAction("AddNewCity");
         }
 
         public ActionResult Confirmation()
@@ -499,6 +514,26 @@ namespace QWERTYShop.Controllers
                 command.ExecuteNonQuery();
                 connection.Close();
             }
+        }
+
+        private void GetViewOfCity()
+        {
+            List<string> city=new List<string>();
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("Select city from public.citylist", connection);
+
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    city.Add(dataReader.GetString(0));
+                }
+                connection.Close();
+            }
+
+            ViewBag.CityList = city;
         }
     }
 }

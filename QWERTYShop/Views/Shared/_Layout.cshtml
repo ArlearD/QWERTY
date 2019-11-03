@@ -21,8 +21,7 @@
                     {
                         <li>@Html.ActionLink("Управление", "Index", "Managment")</li>
                     }
-                    <li style="color:darkgray"><a>Ваш город: @Session["CityName"]</a></li>
-                    <li>@Html.ActionLink("Изменить", "ChangeCity", "Home")</li>
+                <li style="color:darkgray">@Html.ActionLink("Ваш город: " + Session["CityName"], "ChangeCity", "Home") </li>
                     <li>@Html.Partial("_CartPartial")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")

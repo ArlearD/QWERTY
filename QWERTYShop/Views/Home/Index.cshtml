@@ -1,9 +1,12 @@
-﻿<h1 style="text-align:center">Новинки:</h1>
+﻿<head>
+    <link rel="stylesheet" href="~/Content/Styles.css">
+</head>
+<h1 style="text-align:center">Новинки:</h1>
 <div class="conatiner">
     <div class="wrap">
         @foreach (var element in @ViewBag.Cards)
         {
-            <div class="product-item">
+            <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
                 <img src="https://source.unsplash.com/270x400">
                 <div class="product-list">
                     <h3>@element.Name</h3>
@@ -19,87 +22,3 @@
 {
     <input class="buttons" value="@element.Type" type="submit" onClick='location.href="http://localhost:52905/category/@element.Type"' />
 }
-
-
-<style>
-
-    * {
-        box-sizing: border-box;
-    }
-
-    .product-item {
-        width: 300px;
-        text-align: center;
-        margin: 0 auto;
-        border-bottom: 2px solid #F5F5F5;
-        background: white;
-        font-family: "Open Sans";
-        transition: .3s ease-in;
-    }
-
-        .product-item:hover {
-            border-bottom: 2px solid #fc5a5a;
-        }
-
-        .product-item img {
-            display: block;
-            width: 100%;
-        }
-
-    .product-list {
-        background: #fafafa;
-        padding: 15px 0;
-    }
-
-        .product-list h3 {
-            font-size: 18px;
-            font-weight: 400;
-            color: #444444;
-            margin: 0 0 10px 0;
-        }
-
-    .price {
-        font-size: 16px;
-        color: #fc5a5a;
-        display: block;
-        margin-bottom: 12px;
-    }
-
-    .button {
-        text-decoration: none;
-        display: inline-block;
-        padding: 0 12px;
-        background: #cccccc;
-        color: white;
-        text-transform: uppercase;
-        font-size: 12px;
-        line-height: 28px;
-        transition: .3s ease-in;
-    }
-
-    .product-item:hover .button {
-        background: #fc5a5a;
-    }
-
-    .conatiner {
-        width: 100%;
-    }
-
-    .wrap {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -webkit-box-pack: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-        flex-direction: row;
-    }
-</style>

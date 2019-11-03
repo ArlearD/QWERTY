@@ -716,7 +716,8 @@ namespace QWERTYShop.Controllers
 
                 ViewBag.PurchasedId = data;
             }
-
         }
+
+
     }
 }
