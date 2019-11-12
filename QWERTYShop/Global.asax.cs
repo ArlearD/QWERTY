@@ -22,7 +22,7 @@ namespace QWERTYShop
 
         void Session_Start()
         {
-            string userIp = "Request.UserHostAddress";
+            string userIp = Request.UserHostAddress;
             string request = @"http://api.ipstack.com/" + userIp + @"?access_key=00981594f20ffe322488ebd4b9ad9678&fields=city";
             string result = "";
             string trans = "";

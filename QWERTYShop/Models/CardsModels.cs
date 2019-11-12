@@ -29,5 +29,7 @@ namespace QWERTYShop.Models
         {
             return $"Id:={Id} Name:={Name} Cost:={Cost} Image:={Image} Information:={Information} Type:={Type}";
         }
+        [RegularExpression("[A-Za-z]", ErrorMessage = "Только английские буквы!")]
+        public string SpecialName { get; set; }
     }
 }

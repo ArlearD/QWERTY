@@ -292,6 +292,7 @@
     <Content Include="Views\Home\Commentaries.cshtml" />
     <Content Include="Views\Managment\AddNewType.cshtml" />
     <Content Include="Views\Managment\AddPropertiesToType.cshtml" />
+    <Content Include="Views\Managment\AddInformation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
