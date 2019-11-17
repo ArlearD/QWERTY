@@ -45,7 +45,6 @@ namespace QWERTYShop
                 }
             }
             Session["CityName"] = builder.ToString();
-            Session["URL"] = "https://qwertyshop.azurewebsites.net/";
         }
     }
 }

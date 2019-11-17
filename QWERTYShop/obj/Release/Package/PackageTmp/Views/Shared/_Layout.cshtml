@@ -13,6 +13,15 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    @if(HttpContext.Current.User.IsInRole("admin"))
+                    {
+                    <span class="icon-bar"></span>
+                    } 
+                </button>
                 @Html.ActionLink("QWERTYShop", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
@@ -21,7 +30,7 @@
                     {
                         <li>@Html.ActionLink("Управление", "Index", "Managment")</li>
                     }
-                <li style="color:darkgray">@Html.ActionLink("Ваш город: " + Session["CityName"], "ChangeCity", "Home") </li>
+                    <li>@Html.Partial("_CityPartial")</li>
                     <li>@Html.Partial("_CartPartial")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")

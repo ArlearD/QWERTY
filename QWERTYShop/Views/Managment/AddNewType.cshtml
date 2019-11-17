@@ -6,11 +6,15 @@
 @ViewBag.Message
 
 <form method="post">
-    @Html.LabelFor(x=>x.Type)<br/>
-    <input type="text" name="Type" required=""/><br/><br/>
+    <p>Введите название товара (оно будет видно покупателям)</p>
+    @Html.LabelFor(x => x.Type)<br/>
+    <input type="text" name="Type" required/><br/><br/>
+    <p>Введите служебное название товара (только английские буквы)</p>
+    @Html.LabelFor(x => x.SpecialName)<br/>
+    <input type="text" name="SpecialName" required/><br/><br/>
     <input type="submit" value="Добавить"/><br/>
 </form><br/>
-<input class="buttons" value="Вернуться к управлению" type="button" onClick='location.href="http://qwertyshop.azurewebsites.net/Managment/"' />
+<input class="buttons" value="Вернуться к управлению" type="button" onClick='location.href="http://localhost:52905/Managment/"' />
 <br />
 <br />
 <p>На данный момент уже есть следующие категории:</p>

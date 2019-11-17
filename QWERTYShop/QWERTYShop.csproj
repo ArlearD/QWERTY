@@ -240,6 +240,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\QWERTYShop123 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -292,10 +293,10 @@
     <Content Include="Views\Home\Commentaries.cshtml" />
     <Content Include="Views\Managment\AddNewType.cshtml" />
     <Content Include="Views\Managment\AddPropertiesToType.cshtml" />
+    <Content Include="Views\Managment\AddInformation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

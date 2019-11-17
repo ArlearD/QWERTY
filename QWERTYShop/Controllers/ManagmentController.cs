@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Owin.Security.OAuth;
 
 namespace QWERTYShop.Controllers
 {
@@ -65,33 +67,50 @@ namespace QWERTYShop.Controllers
             GetTypes();
             if (ModelState.IsValid)
             {
-                cardsModels.AddedTime = DateTime.Now;
-                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-                {
-                    connection.Open();
-                    NpgsqlCommand command2 = new NpgsqlCommand("select count(*) from public.cards", connection);
-                    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.cards(Name, Type, Image, AddedTime, Cost, information, Id) VALUES (@n, @t, @i, @a, @c, @g, @id)", connection);
-                    var reader = command2.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        cardsModels.Id = reader.GetInt64(0);
-                        cardsModels.Id++;
-                    }
-                    command2.Connection.Close();
-                    connection.Open();
-                    command.Parameters.AddWithValue("n", cardsModels.Name);
-                    command.Parameters.AddWithValue("t", cardsModels.Type);
-                    command.Parameters.AddWithValue("i", cardsModels.Image);
-                    command.Parameters.AddWithValue("a", cardsModels.AddedTime);
-                    command.Parameters.AddWithValue("c", cardsModels.Cost);
-                    command.Parameters.AddWithValue("g", cardsModels.Information);
-                    command.Parameters.AddWithValue("id", cardsModels.Id);
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                    return Redirect("Confirmation");
-                }
+                Session["cmd"] = GetCommandForInformationCard(cardsModels);
+                return Redirect($"/AddInformation/{cardsModels.Type}");
             }
             return View();
+        }
+
+
+        [HttpGet]
+        [Route("AddInformation/{type}")]
+        public ActionResult AddInformation(string type)
+        {
+            GetProperties(type);
+            return View();
+        }
+
+        [HttpPost]
+        [Route("AddInformation/{type}")]
+        public ActionResult AddInformation(List<string> values)
+        {
+            string type = Session["Type"].ToString();
+            var specialName = GetSpecialNameUsingType(type);
+            var command2 = GetCommandToAddInSpecialNameTable(values, specialName);
+            AddNewCard(Session["cmd"].ToString(), command2);
+            return RedirectToAction("Confirmation");
+        }
+
+        private void GetProperties(string type)
+        {
+            string[] properties = null;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"Select properties from types where type='{type}'", connection);
+
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    properties = (string[])dataReader.GetValue(0);
+                }
+                connection.Close();
+            }
+
+            ViewBag.Properties = properties;
         }
 
         [Route("RemoveCity/{city}")]
@@ -127,7 +146,7 @@ namespace QWERTYShop.Controllers
             if (model.Type != null) currentModel = model.Type;
             if (model.Remove != null) currentModel = model.Remove;
             if (model.Name != null) currentModel = model.Name;
-            if (currentModel == "Remove")
+            if (currentModel == "Remove last")
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                 {
@@ -432,7 +451,7 @@ namespace QWERTYShop.Controllers
             client.Send("qqqwertyshop@gmail.com", mail, "Заказ успешно оформлен!", information);
         }
 
-        private void GetTypes()
+        private void GetTypes() //нужно переделать под specialname-
         {
             List<string> data = new List<string>();
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
@@ -462,17 +481,17 @@ namespace QWERTYShop.Controllers
         public ActionResult AddNewType(CardsModels model)
         {
             ViewBag.Message = "Успешно!";
-            AddNewType(model.Type);
+            AddNewType(model.Type, model.SpecialName);
             GetTypes();
             return View();
         }
 
-        private void AddNewType(string type)
+        private void AddNewType(string type, string specialName)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type) values('{type}')", connection);
+                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type, specialname) values('{type}', '{specialName}')", connection);
                 command.ExecuteNonQuery();
                 connection.Close();
             }
@@ -514,6 +533,7 @@ namespace QWERTYShop.Controllers
                 command.ExecuteNonQuery();
                 connection.Close();
             }
+            CreateNewTable(propertiesArr, type);
         }
 
         private void GetViewOfCity()
@@ -532,7 +552,114 @@ namespace QWERTYShop.Controllers
                 }
                 connection.Close();
             }
+
             ViewBag.CityList = city;
+        }
+
+        private void CreateNewTable(string[] propertiesArr, string type)
+        {
+            string body = "";
+            string specialName = GetSpecialNameUsingType(type);
+            specialName = specialName.Replace(' ', '_');
+            string current = $"create table if not exists {specialName}(id bigint, ";
+
+            for (int i = 0; i < propertiesArr.Length; i++)
+            {
+                for (int j = 0; j < propertiesArr[i].Length; j++)
+                {
+                    if (!Char.IsLetterOrDigit(propertiesArr[i], j))
+                    {
+                        propertiesArr[i] = propertiesArr[i].Replace(propertiesArr[i][j], '_');
+                    }
+                }
+                if (propertiesArr.Length - 1 == i)
+                    body += propertiesArr[i] + " varchar);";
+                else
+                {
+                    body += propertiesArr[i] + " varchar, ";
+                }
+            }
+
+            current += body;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand(current, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        public string GetSpecialNameUsingType(string type)
+        {
+            string result = "";
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"Select specialname from types where type='{type}'", connection);
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    result = dataReader.GetString(0);
+                }
+                connection.Close();
+            }
+            return result.Replace(' ', '_').ToLower();
+        }
+
+        private string GetCommandForInformationCard(CardsModels cardsModels)
+        {
+            cardsModels.AddedTime = DateTime.Now;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand("select count(*) from public.cards", connection);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    cardsModels.Id = reader.GetInt64(0);
+                    cardsModels.Id++;
+                }
+                connection.Close();
+            }
+
+            Session["Type"] = cardsModels.Type;
+
+            var cmd =
+                $"INSERT INTO cards(Name, Type, Image, AddedTime, Cost, information, Id) VALUES ('{cardsModels.Name}', '{cardsModels.Type}', '{cardsModels.Image}'" +
+                $", '{cardsModels.AddedTime}', {cardsModels.Cost}, '{cardsModels.Information}', {cardsModels.Id})";
+            return cmd;
+        }
+
+        private void AddNewCard(string command, string command2)
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString)) //в таблицу cards
+            {
+                connection.Open();
+                NpgsqlCommand cmd = new NpgsqlCommand(command, connection);
+                cmd.ExecuteNonQuery();
+                NpgsqlCommand cmd2 = new NpgsqlCommand(command2, connection);
+                cmd2.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        private string GetCommandToAddInSpecialNameTable(List<string> anotherProperties, string specialName)
+        {
+            StringBuilder idBuilder = new StringBuilder();
+            var badId = Session["cmd"].ToString().Split(',').Last();
+            for (int i = 0; i < badId.Length; i++)
+                if (Char.IsDigit(badId[i])) idBuilder.Append(badId[i]);
+            long id = long.Parse(idBuilder.ToString());
+            StringBuilder builder = new StringBuilder($"INSERT INTO {specialName} VALUES({id}, ");
+            for (int i = 0; i < anotherProperties.Count; i++)
+            {
+                if (anotherProperties.Count - 1 == i)
+                    builder.Append($"'{anotherProperties[i]}')");
+                else
+                    builder.Append($"'{anotherProperties[i]}', ");
+            }
+            return builder.ToString();
         }
     }
 }

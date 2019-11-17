@@ -66,28 +66,9 @@ namespace QWERTYShop.Controllers
         }
 
         [Route("card/{id}")]
-        public ActionResult Card(long id) //ТУТ был "long?" вместо "long"
+        public ActionResult Card(long id)
         {
-            var card = new CardsModels();
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (var command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
-                {
-                    var reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            card.Id = reader.GetInt64(0);
-                            card.Name = reader.GetString(1);
-                            card.Type = reader.GetString(2);
-                            card.Image = reader.GetString(4);
-                            card.Information = reader.GetString(5);
-                            card.Cost = reader.GetInt32(6);
-                        }
-                }
-            }
-
+            var card = GetOutputForCard(id);
             var IdsToOutput = GetAdditionalIdProducts(id);
             if (IdsToOutput.Count != 0)
                 CreateCardToBuyWith(IdsToOutput);
@@ -652,8 +633,8 @@ namespace QWERTYShop.Controllers
                     if (reader.HasRows)
                         while (reader.Read())
                         {
-                            if(!reader.IsDBNull(1))
-                            data.Add(new PurchasedProductsModels { Id = reader.GetInt64(0), PurchasedProducts = reader.GetString(1) });
+                            if (!reader.IsDBNull(1))
+                                data.Add(new PurchasedProductsModels { Id = reader.GetInt64(0), PurchasedProducts = reader.GetString(1) });
                         }
                 }
             }
@@ -718,6 +699,66 @@ namespace QWERTYShop.Controllers
             }
         }
 
+        private CardsModels GetOutputForCard(long id)
+        {
+            var card = new CardsModels();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            card.Id = reader.GetInt64(0);
+                            card.Name = reader.GetString(1);
+                            card.Type = reader.GetString(2);
+                            card.Image = reader.GetString(4);
+                            card.Information = reader.GetString(5);
+                            card.Cost = reader.GetInt32(6);
+                        }
+                }
+            }
 
+            string specialName = new ManagmentController().GetSpecialNameUsingType(card.Type); //интересно что будет
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                string[] namesOfProperties = null;
+                var properties = new List<string>();
+                int numOfColumns = 0;
+
+                connection.OpenAsync();
+                NpgsqlCommand cmd = new NpgsqlCommand($"SELECT count(*) FROM information_schema.columns where table_name='{specialName}'", connection);
+                var reader = cmd.ExecuteReaderAsync();
+                while (reader.Result.Read())
+                {
+                    numOfColumns = reader.Result.GetInt32(0);
+                }
+                connection.Close();
+
+                connection.OpenAsync();
+                cmd = new NpgsqlCommand($"select * from {specialName} where id={id}", connection);
+                reader = cmd.ExecuteReaderAsync();
+                while (reader.Result.Read())
+                {
+                    for (int i = 1; i < numOfColumns; i++)
+                        properties.Add(reader.Result.GetString(i));
+
+                }
+                connection.Close();
+                connection.OpenAsync();
+                cmd = new NpgsqlCommand($"select properties from types where type='{card.Type}'", connection);
+                reader = cmd.ExecuteReaderAsync();
+                while (reader.Result.Read())
+                {
+                    namesOfProperties = (string[])reader.Result.GetValue(0);
+                }
+                connection.Close();
+                ViewBag.NamesOfProperties = namesOfProperties;
+                ViewBag.Properties = properties;
+            }
+            return card;
+        }
     }
 }
