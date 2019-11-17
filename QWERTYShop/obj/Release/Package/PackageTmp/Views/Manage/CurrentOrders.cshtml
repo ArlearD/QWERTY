@@ -1,0 +1,48 @@
+﻿@model QWERTYShop.Models.CurrentOrdersCheckModels
+@{
+    ViewBag.Title = "CurrentOrders";
+}
+
+<h2>Текущие заказы</h2>
+<form method="post">
+    @Html.LabelFor(x => x.Mail)
+    @Html.ValidationMessageFor(x => x.Mail)
+    @Html.TextBoxFor(x => x.Mail)<br />
+    @Html.LabelFor(x => x.Id)
+    @Html.ValidationMessageFor(x => x.Id)
+    @Html.TextBoxFor(x => x.Id)<br />
+    <input type="submit" value="получить!" />
+</form>
+<p>@ViewBag.NotFound</p>
+@if (@ViewBag.CurrentOrders != null)
+{
+    foreach (var element in ViewBag.CurrentOrders)
+    {
+        <p>Номер заказа: @element.Id</p>
+        if (@element.Condition == "handles")
+        {
+            <p>Ваш заказ находится на стадии обработки!</p>
+        }
+        if (@element.Condition == "delivers")
+        {
+            <p>Ваш заказ доставляется!</p>
+        }
+        if (@element.Condition == "ready to pickup")
+        {
+            <p>Ваш заказ находится в центре самовывоза! Можете его забирать!</p>
+        }
+        if (@element.Delivery == "Самовывоз")
+        {
+            <p>Вы выбрали самовывоз</p>
+        }
+        if (@element.Delivery == "Доставка до квартиры")
+        {
+            <p>Вы выбрали доставку до квартиры</p>
+        }
+        if (@element.Paid == true)
+        {
+            <p>Напоминаем, что вы уже оплатили заказ!</p>
+        }
+        <br/>
+    }
+}

@@ -88,26 +88,10 @@ namespace QWERTYShop.Controllers
                     command.Parameters.AddWithValue("id", cardsModels.Id);
                     command.ExecuteNonQuery();
                     connection.Close();
-                    return Redirect($"/AddInformation/{cardsModels.Type}");
+                    return Redirect("Confirmation");
                 }
             }
             return View();
-        }
-
-        [HttpGet]
-        [Route("AddInformation/{type}")]
-        public ActionResult AddInformation(string type)
-        {
-            GetProperties(type);
-            return View();
-        }
-
-        [HttpPost]
-        [Route("AddInformation/{type}")]
-        public ActionResult AddInformation(List<string> values)
-        {
-            var a = 1;
-            return RedirectToAction("Confirmation");
         }
 
         [Route("RemoveCity/{city}")]
@@ -116,7 +100,7 @@ namespace QWERTYShop.Controllers
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                NpgsqlCommand command=new NpgsqlCommand($"delete from citylist where city='{city}'",connection);
+                NpgsqlCommand command = new NpgsqlCommand($"delete from citylist where city='{city}'", connection);
                 command.ExecuteNonQuery();
             }
 
@@ -448,7 +432,7 @@ namespace QWERTYShop.Controllers
             client.Send("qqqwertyshop@gmail.com", mail, "Заказ успешно оформлен!", information);
         }
 
-        private void GetTypes() //нужно переделать под specialname-
+        private void GetTypes()
         {
             List<string> data = new List<string>();
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
@@ -478,17 +462,17 @@ namespace QWERTYShop.Controllers
         public ActionResult AddNewType(CardsModels model)
         {
             ViewBag.Message = "Успешно!";
-            AddNewType(model.Type, model.SpecialName);
+            AddNewType(model.Type);
             GetTypes();
             return View();
         }
 
-        private void AddNewType(string type, string specialName)
+        private void AddNewType(string type)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type, specialname) values('{type}', '{specialName}')", connection); 
+                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type) values('{type}')", connection);
                 command.ExecuteNonQuery();
                 connection.Close();
             }
@@ -530,12 +514,11 @@ namespace QWERTYShop.Controllers
                 command.ExecuteNonQuery();
                 connection.Close();
             }
-            CreateNewTable(propertiesArr, type); 
         }
 
         private void GetViewOfCity()
         {
-            List<string> city=new List<string>();
+            List<string> city = new List<string>();
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
@@ -549,80 +532,7 @@ namespace QWERTYShop.Controllers
                 }
                 connection.Close();
             }
-
             ViewBag.CityList = city;
-        }
-
-        private void GetProperties(string type)
-        {
-            string[] properties = null;
-
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"Select properties from types where type='{type}'", connection);
-
-                NpgsqlDataReader dataReader = command.ExecuteReader();
-
-                while (dataReader.Read())
-                {
-                    properties = (string[])dataReader.GetValue(0);
-                }
-                connection.Close();
-            }
-            ViewBag.Properties = properties;
-        }
-
-        private void CreateNewTable(string[] propertiesArr, string type)
-        {
-            string body = "";
-            string specialName = GetSpecialNameUsingType(type);
-            specialName = specialName.Replace(' ', '_');
-            string current = $"create table if not exists {specialName}(id bigint, ";
-
-            for (int i = 0; i < propertiesArr.Length; i++)
-            {
-                for (int j = 0; j < propertiesArr[i].Length; j++)
-                {
-                    if (!Char.IsLetterOrDigit(propertiesArr[i], j))
-                    {
-                        propertiesArr[i]=propertiesArr[i].Replace(propertiesArr[i][j], '_');
-                    }
-                }
-                if (propertiesArr.Length - 1 == i)
-                    body += propertiesArr[i] + " varchar);";
-                else
-                {
-                    body += propertiesArr[i] + " varchar, ";
-                }
-            }
-
-            current += body;
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand(current, connection);
-                command.ExecuteNonQuery();
-                connection.Close();
-            }
-        }
-
-        private string GetSpecialNameUsingType(string type)
-        {
-            string result = "";
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"Select specialname from public.types where type='{type}'", connection);
-                NpgsqlDataReader dataReader = command.ExecuteReader();
-                while (dataReader.Read())
-                {
-                    result = dataReader.GetString(0);
-                }
-                connection.Close();
-            }
-
-            return result;
         }
     }
 }

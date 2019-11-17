@@ -40,4 +40,4 @@ create table commentaries
     mark int
 );
 
-create table types(type varchar, properties varchar[],)
+create table types(type varchar, properties varchar[])

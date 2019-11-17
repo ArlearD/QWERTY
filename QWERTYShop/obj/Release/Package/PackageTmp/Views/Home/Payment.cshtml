@@ -2,27 +2,47 @@
 @{
     ViewBag.Title = "Payment";
 }
-
 <h2>Оплата</h2>
-
+<h3>Стоимость: @Session["Price"]</h3>
 <form method="post">
     @Html.LabelFor(model => model.CardNumber)
     @Html.ValidationMessageFor(model => model.CardNumber)<br />
     <input type="text" name="CardNumber" required /> <br /><br />
-
     @Html.LabelFor(model => model.CVC)
     @Html.ValidationMessageFor(model => model.CVC)<br />
     <input type="password" name="CVC" required /> <br /><br />
+    @Html.LabelFor(x => x.MonthValidation) <br />
+    <select name="MonthValidation">
+        <option>Январь</option>
+        <option>Февраль</option>
+        <option>Март</option>
+        <option>Апрель</option>
+        <option>Май</option>
+        <option>Июнь</option>
+        <option>Июль</option>
+        <option>Август</option>
+        <option>Сентябрь</option>
+        <option>Октябрь</option>
+        <option>Ноябрь</option>
+        <option>Декабрь</option>
+    </select><br/>
 
-    @Html.LabelFor(model => model.DataValidation)
-    @Html.ValidationMessageFor(model => model.DataValidation)<br />
-    <input type="text" name="DataValidation" required /> <br /><br />
-
+    @Html.LabelFor(x => x.YearValidation) <br />
+    <select name="YearValidation">
+        <option>2019</option>
+        <option>2020</option>
+        <option>2021</option>
+        <option>2022</option>
+        <option>2023</option>
+        <option>2024</option>
+        <option>2025</option>
+        <option>2026</option>
+        <option>2027</option>
+        <option>2028</option>
+    </select> <br/>
     @Html.LabelFor(model => model.Person)
     @Html.ValidationMessageFor(model => model.Person)<br />
     <input type="text" name="Person" required /> <br /><br />
 
-
     <input type="submit" value="продолжить" />
 </form>
-

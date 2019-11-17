@@ -1,0 +1,39 @@
+﻿@model QWERTYShop.Models.CommentariesModels
+
+@{
+    ViewBag.Title = "Commentaries";
+}
+
+<h2>Отзывы</h2>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <form method="post">
+        <textarea name="comment" cols="100" required></textarea> <br />
+        <input type="number" value="@long.Parse(Request.Url.ToString().Split('/')[4])" name="Id" hidden />
+        <input type="text" value="@User.Identity.Name" name="UserName" hidden />
+        <input type="submit" value="Оставить отзыв" />
+        <select name="Mark">
+            @for (int i = 0; i <= 10; i++)
+            {
+                <option>@i</option>
+            }
+        </select>
+    </form>
+}
+else
+{
+    <p>Авторизуйтесь для того, чтобы оставлять отзывы! </p>
+}
+
+@foreach (var element in ViewBag.Commentaries)
+{
+    <p>@element</p> <br/>
+}
+
+<style>
+    textarea {
+        resize: none;
+        height: 150px;
+    }
+</style>

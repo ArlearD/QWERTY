@@ -1,34 +1,44 @@
 ﻿<!DOCTYPE html>
 @model QWERTYShop.Models.CardsModels
 
-<h3>Добавление новой карточки товара</h3>
+<h1 align="center">Добавление новой карточки товара</h1>
 <form method="post" align="center">
     @Html.LabelFor(model => model.Name)
     @Html.ValidationMessageFor(model => model.Name)
     <br />
     <input type="text" name="Name" required />
     <br />
+
     @Html.LabelFor(model => model.Cost)
     @Html.ValidationMessageFor(model => model.Cost)
     <br />
     <input type="number" name="Cost" required />
     <br />
+
     @Html.LabelFor(model => model.Image)
     @Html.ValidationMessageFor(model => model.Image)
     <br />
     <input type="text" name="Image" />
     <br />
+
     @Html.LabelFor(model => model.Information)
     @Html.ValidationMessageFor(model => model.Name)
     <br />
     <input type="text" name="Information" required />
     <br />
+
     @Html.LabelFor(model => model.Type)
     @Html.ValidationMessageFor(model => model.Type)
     <br />
-    <input type="text" name="Type" required />
+    <select name="Type">
+        @foreach (var element in ViewBag.Types)
+        {
+            <option>@element</option>
+        }
+    </select>
     <br />
     <br />
+
     <input type="submit" value="Отправить" />
 </form>
 <p>@Html.ActionLink("Посмотреть представление базы данных", "Presentation", "Managment")</p>

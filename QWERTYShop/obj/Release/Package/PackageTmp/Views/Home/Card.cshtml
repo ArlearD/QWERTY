@@ -3,11 +3,29 @@
     ViewBag.Title = "Card";
 }
 
+    <head>
+        <link rel="stylesheet" href="~/Content/Styles.css">
+    </head>
+
 <h2>@Model.Name</h2>
 <p>@Model.Image</p>
 <p>@Model.Information</p>
 <p>@Model.Cost</p>
-
-<form>
-    <input type="button" style="color:red" value="Купить!" onClick='location.href="http://localhost:52905/AddToCard/@Model.Id"'>
-</form>
+@if (ViewBag.AverageMark != -1)
+{
+    <p>средняя оценка покупателей составляет @ViewBag.AverageMark</p>
+}
+else
+{
+    <p>оценок на данный товар еще нет</p>
+}
+<input class="buttons" value="Купить" type="submit" onClick='location.href="http://qwertyshop.azurewebsites.net/AddToCard/@Model.Id"' />
+<input class="buttons" value="Отзывы" type="submit" onClick='location.href="http://qwertyshop.azurewebsites.net/card/@Model.Id/commentaries"' /><br />
+@if (ViewBag.PurchasedId.Count != 0)
+{
+    <p>С этим товаром покупают:<br /></p>
+    foreach (var element in ViewBag.PurchasedId)
+    {
+    <p>@element.Name @element.Cost @element.Image <input class="button" value="Подробнее" type="submit" onClick='location.href="http://localhost:52905/card/@element.Id"' /></p>
+    }
+}

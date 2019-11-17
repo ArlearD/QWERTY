@@ -2,9 +2,39 @@
 @{
     ViewBag.Title = "Success";
 }
+<h2>Успешно! Ваш номер заказа: @ViewBag.Id</h2>
+<p>Информация по вашему заказу отправлена на Вашу почту! Также при смене статуса заказа вы получите письмо!</p>
+@if (Session["Paid"] == "true")
+{
+    <p>Спасибо за оплату онлайн!</p>
+    if (Session["Delivery"].ToString() == "Самовывоз")
+    {
+        <p>Просто приходите @Session["PickupDate"] в пункт самовывоза и забирайте Ваш заказ! Ждём Вас в нашем магазине снова :)</p>
+    }
+    if (Session["Delivery"].ToString() == "Доставка до квартиры")
+    {
+        <p>Ожидайте доставку @Session["DeliveryDate"] с @Session["DeliveryTime"].ToString().Split('-')[0] по @Session["DeliveryTime"].ToString().Split('-')[1]! Наш курьер позвонит вам в день доставки! Ждём Вас в нашем магазине снова :)</p>
+    }
+    Session["Paid"] = null;
+    Session["Cart"] = null;
+}
+else
+{
+    if (Session["Delivery"].ToString() == "Самовывоз")
+    {
+        <p>Просто приходите @Session["PickupDate"] в пункт самовывоза, оплачивайте и забирайте Ваш заказ! Ждём Вас в нашем магазине снова :)</p>
+        <p>Напоминаем сумма Вашего заказа составляет @Session["Price"]</p>
+    }
 
-<h2>Успешно!</h2>
-<p>Ваш заказ успешно оформлен!</p>
-@Html.ActionLink("На главную страницу", "Index","Home")
+    if (Session["Delivery"].ToString() == "Доставка до квартиры")
+    {
+        <p>Ожидайте доставку @Session["DeliveryDate"] с @Session["DeliveryTime"].ToString().Split('-')[0] по @Session["DeliveryTime"].ToString().Split('-')[1]! Наш курьер позвонит вам в день доставки! Ждём Вас в нашем магазине снова :)</p>
+        <p>Напоминаем сумма Вашего заказа составляет @Session["Price"]</p>
+    }
+    Session["Cart"] = null;
+}
 
+
+
+@Html.ActionLink("На главную страницу", "Index", "Home")
 

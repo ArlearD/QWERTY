@@ -6,7 +6,7 @@
     <div class="wrap">
         @foreach (var element in @ViewBag.Cards)
         {
-            <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
+            <div onClick='location.href="http://qwertyshop.azurewebsites.net/Card/@element.Id"' class="product-item">
                 <img src="https://source.unsplash.com/270x400">
                 <div class="product-list">
                     <h3>@element.Name</h3>
@@ -20,5 +20,5 @@
 
 @foreach (var element in ViewBag.Categories)
 {
-    <input class="buttons" value="@element.Type" type="submit" onClick='location.href="http://localhost:52905/category/@element.Type"' />
+    <input class="buttons" value="@element.Type" type="submit" onClick='location.href="http://qwertyshop.azurewebsites.net/category/@element.Type"' />
 }

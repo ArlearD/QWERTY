@@ -17,7 +17,7 @@ namespace QWERTYShop.Models
         [Required(ErrorMessage = "Заполните это поле!")]
         [Display(Name = "Дом")]
         [RegularExpression(@"[0-9А-Яа-яЁё/-]{1,8}", ErrorMessage = "Некорректный номер дома")]
-        public string House { get; set; }
+        public int House { get; set; }
 
         [Required(ErrorMessage = "Заполните это поле!")]
         [Display(Name = "Номер квартиры")]

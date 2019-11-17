@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Category";
+}
+
+<head>
+    <link rel="stylesheet" href="~/Content/Styles.css" />
+</head>
+
+<h2>@ViewBag.category</h2>
+
+
+<div class="conatiner">
+    <div class="wrap">
+        @foreach (var element in @ViewBag.Cards)
+        {
+            <div onClick='location.href="http://qwertyshop.azurewebsites.net/Card/@element.Id"' class="product-item">
+                <img src="https://source.unsplash.com/270x400">
+                <div class="product-list">
+                    <h3>@element.Name</h3>
+                    <span class="price">₽ @element.Cost</span>
+                    <h4>@Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</h4>
+                </div>
+            </div>
+        }
+    </div>
+</div>
