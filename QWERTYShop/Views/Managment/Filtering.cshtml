@@ -1,0 +1,38 @@
+﻿@model QWERTYShop.Models.FilteringModels
+@{
+    ViewBag.Title = "View";
+}
+
+<h2>Меню управления фильтров</h2>
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+<form method="post">
+    <select name="Category">
+        @foreach (var element in ViewBag.Categories)
+        {
+            <option>@element</option>
+        }
+    </select>
+    <input type="submit" value="Выбрать категорию" />
+</form>
+<br/>
+@if (ViewBag.Category != "")
+{
+<p>Выбранная категория: @ViewBag.Category</p>
+}
+@foreach (var element in ViewBag.Properties)
+{
+    <form method="post">
+        <p>@element
+            <select name="Operation">
+                <option>Добавить фильтр</option>
+                <option>Удалить</option>
+            </select>
+            <input name="Property" value="@element" hidden/>
+            <input name="Category" value="@ViewBag.Category" hidden/>
+            <input type="submit" value="Выбрать"/>
+        </p>
+    </form>
+}

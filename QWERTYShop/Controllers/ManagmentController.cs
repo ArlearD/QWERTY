@@ -491,7 +491,7 @@ namespace QWERTYShop.Controllers
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type, specialname) values('{type}', '{specialName}')", connection);
+                NpgsqlCommand command = new NpgsqlCommand($"insert into types(type, specialname, choosefilter) values('{type}', '{specialName}', '{{}}')", connection);
                 command.ExecuteNonQuery();
                 connection.Close();
             }
@@ -660,6 +660,71 @@ namespace QWERTYShop.Controllers
                     builder.Append($"'{anotherProperties[i]}', ");
             }
             return builder.ToString();
+        }
+
+        public ActionResult Filtering()
+        {
+            GetCategories();
+            ViewBag.Properties = new List<string>();
+            ViewBag.Category = "";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Filtering(List<string> Category, FilteringModels model)
+        {
+            GetCategories();
+            GetProperties(Category[0]);
+            ViewBag.Category = Category[0];
+            if (model.Operation == null)
+            {
+                return View();
+            }
+            DoCommand(model.Operation, model.Property, Category[0]);
+            return View(model);
+        }
+
+        private void GetCategories()
+        {
+            List<string> categories = new List<string>();
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand cmd = new NpgsqlCommand("select type from types", connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    categories.Add(reader.GetString(0));
+                }
+            }
+            ViewBag.Categories = categories;
+        }
+
+        private void DoCommand(string command, string propertyName, string type)
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                if (command == "Добавить фильтр")
+                {
+                    NpgsqlCommand cmd = new NpgsqlCommand($"update types set choosefilter = choosefilter || " +
+                                                          $"'{{\"{propertyName}\"}}' where type='{type}'", connection); //вставка в массив
+                    cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    NpgsqlCommand cmd = new NpgsqlCommand($"update types SET choosefilter = " +
+                                                          $"array_remove(choosefilter, '{propertyName}')", connection); //удаление из массива
+                    cmd.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+
+            if (command == "Добавить фильтр")
+                ViewBag.Message = $"Категории {type} добавлена фильтрация по свойству: {propertyName}";
+            else
+                ViewBag.Message = $"Успешно удалена фильтрация по свойству: {propertyName} из категории {type}";
+
         }
     }
 }
