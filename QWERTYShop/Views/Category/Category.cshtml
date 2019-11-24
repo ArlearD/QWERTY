@@ -22,15 +22,21 @@
             <option selected>По цене</option>
         }
     </select>
+    <br />
+    <p>Фильтр по цене:</p>
+    От: <input type="number" min="0" name="FromPrice" value="@ViewBag.Values[0]" /> До: <input type="number" min="0" value="@ViewBag.Values[1]" name="ToPrice" />
+    <br />
+    <p>Фильтр по рейтингу:</p>
+    От: <input type="number" min="0" max="10" name="FromRating" value="@ViewBag.Values[2]" /> До: <input type="number" min="0" name="ToRating" value="@ViewBag.Values[3]" />
     <br/>
-    
-    <input type="submit" value="Отсортировать!"/>
+    <br/>
+    <input type="submit" value="Отсортировать!" />
 </form>
 
 
 <div class="conatiner">
     <div class="wrap">
-        @foreach (var element in @ViewBag.Cards)
+        @foreach (var element in ViewBag.Cards)
         {
             <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
                 <img src="@element.Image">
