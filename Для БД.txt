@@ -7,7 +7,7 @@ create table public.cards
     Image text,
     Information text,
     Cost int
-);
+, averagemark float4);
 
 
 create table public.citylist(	City varchar, IsAvailableForPickup bool, CostForDelivery int);

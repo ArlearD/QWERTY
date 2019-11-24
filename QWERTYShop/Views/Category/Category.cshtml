@@ -1,12 +1,31 @@
 ﻿@{
     ViewBag.Title = "Category";
 }
-
+@model QWERTYShop.Models.CategoryModels
 <head>
     <link rel="stylesheet" href="~/Content/Styles.css" />
 </head>
 
 <h2>@ViewBag.category</h2>
+
+<form method="post">
+    По убыванию @Html.CheckBoxFor(x => x.IsDescending)
+    <select name="Method">
+        @if (ViewBag.Sorted == "По рейтингу")
+        {
+            <option selected>По рейтингу</option>
+            <option>По цене</option>
+        }
+        else
+        {
+            <option>По рейтингу</option>
+            <option selected>По цене</option>
+        }
+    </select>
+    <br/>
+    
+    <input type="submit" value="Отсортировать!"/>
+</form>
 
 
 <div class="conatiner">

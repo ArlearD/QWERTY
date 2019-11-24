@@ -562,6 +562,10 @@ namespace QWERTYShop.Controllers
                             $"INSERT INTO commentaries values('{model.UserName}', '{model.Comment}', '{model.Time}', {model.Id}, {model.Mark} )", connection);
                     command.ExecuteNonQuery();
                     connection.Close();
+                    connection.Open();
+                    NpgsqlCommand cmd = new NpgsqlCommand($"update cards set averagemark={GetAverageMark(model.Id)} where id={model.Id};", connection);
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
                 }
             }
             GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
