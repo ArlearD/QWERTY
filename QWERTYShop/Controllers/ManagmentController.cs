@@ -626,8 +626,8 @@ namespace QWERTYShop.Controllers
             Session["Type"] = cardsModels.Type;
 
             var cmd =
-                $"INSERT INTO cards(Name, Type, Image, AddedTime, Cost, information, Id, averagemark) VALUES ('{cardsModels.Name}', '{cardsModels.Type}', '{cardsModels.Image}'" +
-                $", '{cardsModels.AddedTime}', {cardsModels.Cost}, '{cardsModels.Information}', {cardsModels.Id}, 10)";
+                $"INSERT INTO cards(Name, Type, Image, AddedTime, Cost, information, averagemark, Id) VALUES ('{cardsModels.Name}', '{cardsModels.Type}', '{cardsModels.Image}'" +
+                $", '{cardsModels.AddedTime}', {cardsModels.Cost}, '{cardsModels.Information}', 10, {cardsModels.Id})";
             return cmd;
         }
 

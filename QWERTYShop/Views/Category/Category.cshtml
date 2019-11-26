@@ -28,9 +28,23 @@
     <br />
     <p>Фильтр по рейтингу:</p>
     От: <input type="number" min="0" max="10" name="FromRating" value="@ViewBag.Values[2]" /> До: <input type="number" min="0" name="ToRating" value="@ViewBag.Values[3]" />
-    <br/>
+    <br />
+    <br />
+    @{
+        int i = 0;
+        foreach (var property in ViewBag.Dictionary)
+        {
+            <p style="color: cornflowerblue">@property.Key</p>
+            foreach (var value in property.Value)
+            {
+            <p>@Html.CheckBoxFor(x => x.Check[i]) @value.Value</p>
+                i++;
+            }
+        }
+    }
     <br/>
     <input type="submit" value="Отсортировать!" />
+
 </form>
 
 

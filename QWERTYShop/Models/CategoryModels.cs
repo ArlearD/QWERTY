@@ -1,4 +1,6 @@
-﻿namespace QWERTYShop.Models
+﻿using System.Collections.Generic;
+
+namespace QWERTYShop.Models
 {
     public class CategoryModels
     {
@@ -9,5 +11,6 @@
         public int ToPrice { get; set; }
         public int FromRating { get; set; }
         public int ToRating { get; set; }
+        public List<bool> Check { get; set; } //лист из значений чекбоксов
     }
 }
