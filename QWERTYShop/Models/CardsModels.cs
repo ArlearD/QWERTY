@@ -12,16 +12,21 @@ namespace QWERTYShop.Models
 
         public DateTime AddedTime { get; set; }
 
+        [Display(Name = "Название товара")]
         [Required(ErrorMessage = "Введите название товара")]
         public string Name { get; set; }
 
+        [Display(Name = "Стоимость товара")]
         [Required(ErrorMessage = "Введите цену")]
         public int Cost { get; set; }
 
+        [Display(Name = "Ссылка на изображение товара")]
         public string Image { get; set; }
 
+        [Display(Name = "Дополнительная информация о товаре")]
         public string Information { get; set; }
 
+        [Display(Name = "Категория товара")]
         [Required(ErrorMessage = "Введите тип продукта")]
         public string Type { get; set; }
 

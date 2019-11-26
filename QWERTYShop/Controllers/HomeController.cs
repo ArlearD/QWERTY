@@ -65,9 +65,71 @@ namespace QWERTYShop.Controllers
             return View();
         }
 
+        private void AddCommentary(List<string> commentary)
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command =
+                    new NpgsqlCommand(
+                        $"INSERT INTO commentaries values('{commentary[2]}', '{commentary[0]}', '{DateTime.Today}', {long.Parse(commentary[1])}, {int.Parse(commentary[3])} )", connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                connection.Open();
+                NpgsqlCommand cmd = new NpgsqlCommand($"update cards set averagemark={GetAverageMark(long.Parse(commentary[1]))} where id={long.Parse(commentary[1])};", connection);
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        private void GetCommentaries(long id)
+        {
+            List<string> data = new List<string>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"SELECT * FROM commentaries where id={id};",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            data.Add(reader.GetString(0) + " " + reader.GetString(1) + " " + reader.GetDateTime(2) + " " +
+                                      reader.GetInt32(4));
+                        }
+                }
+            }
+            ViewBag.Commentaries = data;
+        }
+
+        private string GetAverageMark(long id)
+        {
+            float avg = -1;
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"Select avg(mark) from(SELECT mark FROM commentaries where id={id}) as a;",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            if (!reader.IsDBNull(0))
+                                avg = reader.GetFloat(0);
+                        }
+                }
+            }
+            return avg.ToString().Replace(',', '.');
+        }
+
         [Route("card/{id}")]
         public ActionResult Card(long id)
         {
+            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
             var card = GetOutputForCard(id);
             var IdsToOutput = GetAdditionalIdProducts(id);
             if (IdsToOutput.Count != 0)
@@ -75,6 +137,26 @@ namespace QWERTYShop.Controllers
             else ViewBag.PurchasedId = new List<CardsModels>();
 
             ViewBag.AverageMark = GetAverageMark(id);
+            return View(card);
+        }
+
+        [Route("card/{id}")]
+        [HttpPost]
+        public ActionResult Card(long id, List<string> comment)
+        {
+            if (ModelState.IsValid)
+            {
+                AddCommentary(comment);
+            }
+            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
+            var card = GetOutputForCard(id);
+            var idsToOutput = GetAdditionalIdProducts(id);
+            if (idsToOutput.Count != 0)
+                CreateCardToBuyWith(idsToOutput);
+            else ViewBag.PurchasedId = new List<CardsModels>();
+
+            ViewBag.AverageMark = GetAverageMark(id);
+
             return View(card);
         }
 
@@ -413,7 +495,7 @@ namespace QWERTYShop.Controllers
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
             client.Credentials = new NetworkCredential("qqqwertyshop@gmail.com", "1234QWER+");
-            client.Send("qqqwertyshop@gmail.com", Session["PurchaseMail"].ToString(), "Заказ успешно оформлен!", information);
+            client.Send("qqqwertyshop@gmail.com", Session["PurchaseMail"].ToString(), "QWERTYShop", information);
 
             return View();
         }
@@ -437,6 +519,7 @@ namespace QWERTYShop.Controllers
 
         public ActionResult PurchaseData()
         {
+            GetPickupAddresses(Session["CityName"].ToString());
             var currentDate = DateTime.Today.Date;
             List<string> availableDatesOfPickup = new List<string>();
             for (int i = 1; i <= 7; i++)
@@ -465,6 +548,7 @@ namespace QWERTYShop.Controllers
         [HttpPost]
         public ActionResult PurchaseData(PurchaseModels model)
         {
+            GetPickupAddresses(Session["CityName"].ToString());
             var currentDate = DateTime.Today.Date;
             List<string> availableDatesOfPickup = new List<string>();
             for (int i = 1; i <= 7; i++)
@@ -538,89 +622,6 @@ namespace QWERTYShop.Controllers
                 connection.Close();
             }
             return currMax + 1;
-        }
-
-        [Route("card/{id}/commentaries")]
-        public ActionResult Commentaries()
-        {
-            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
-            return View();
-        }
-
-        [Route("card/{id}/commentaries")]
-        [HttpPost]
-        public ActionResult Commentaries(CommentariesModels model)
-        {
-            if (ModelState.IsValid)
-            {
-                model.Time = DateTime.Today;
-                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-                {
-                    connection.Open();
-                    NpgsqlCommand command =
-                        new NpgsqlCommand(
-                            $"INSERT INTO commentaries values('{model.UserName}', '{model.Comment}', '{model.Time}', {model.Id}, {model.Mark} )", connection);
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                    connection.Open();
-                    NpgsqlCommand cmd = new NpgsqlCommand($"update cards set averagemark={GetAverageMark(model.Id)} where id={model.Id};", connection);
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
-            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
-
-            return View();
-        }
-
-        private void GetCommentaries(long id)
-        {
-            List<CommentariesModels> data = new List<CommentariesModels>();
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (var command =
-                    new NpgsqlCommand($"SELECT * FROM commentaries where id={id};",
-                        connection))
-                {
-                    var reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            data.Add(new CommentariesModels
-                            {
-                                UserName = reader.GetString(0),
-                                Comment = reader.GetString(1),
-                                Time = reader.GetDateTime(2),
-                                Id = reader.GetInt64(3),
-                                Mark = reader.GetInt32(4)
-                            });
-                        }
-                }
-            }
-            ViewBag.Commentaries = data;
-        }
-
-        private float GetAverageMark(long id)
-        {
-            float avg = -1;
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (var command =
-                    new NpgsqlCommand($"Select avg(mark) from(SELECT mark FROM commentaries where id={id}) as a;",
-                        connection))
-                {
-                    var reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            if (!reader.IsDBNull(0))
-                                avg = reader.GetFloat(0);
-                        }
-                }
-            }
-            return avg;
         }
 
         private List<long> GetAdditionalIdProducts(long id)
@@ -763,6 +764,23 @@ namespace QWERTYShop.Controllers
                 ViewBag.Properties = properties;
             }
             return card;
+        }
+
+        private void GetPickupAddresses(string city)
+        {
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                List<string> addresses = new List<string>();
+                connection.Open();
+                var cmd = new NpgsqlCommand($"select addresses from citylist where city='{city}'", connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    addresses = ((string[])reader.GetValue(0)).ToList();
+                }
+                connection.Close();
+                ViewBag.Addresses = addresses;
+            }
         }
     }
 }

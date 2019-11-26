@@ -45,5 +45,8 @@ namespace QWERTYShop.Models
 
         public string Payment { get; set; }
 
+        [Display(Name = "Выберите пункт выдачи")]
+        public string Addresses { get; set; }
+
     }
 }

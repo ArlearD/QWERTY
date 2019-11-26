@@ -4,22 +4,18 @@
 }
 <h2>Добавление новой категории товара</h2>
 @ViewBag.Message
-
 <form method="post">
     <p>Введите название товара (оно будет видно покупателям)</p>
-    @Html.LabelFor(x => x.Type)<br/>
-    <input type="text" name="Type" required/><br/><br/>
+    <input type="text" name="Type" required /><br /><br />
     <p>Введите служебное название товара (только английские буквы)</p>
-    @Html.LabelFor(x => x.SpecialName)<br/>
-    <input type="text" name="SpecialName" required/><br/><br/>
-    <input type="submit" value="Добавить"/><br/>
-</form><br/>
+    <input type="text" name="SpecialName" required /><br /><br />
+    <input type="submit" value="Добавить" /><br />
+</form><br />
 <input class="buttons" value="Вернуться к управлению" type="button" onClick='location.href="http://localhost:52905/Managment/"' />
 <br />
 <br />
-<p>На данный момент уже есть следующие категории:</p>
+<p style="color: cornflowerblue">На данный момент имеются следующие категории:</p>
 @foreach (var element in ViewBag.Types)
 {
-    @element<br/>
+    <b>@element</b><br />
 }
-

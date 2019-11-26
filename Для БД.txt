@@ -10,7 +10,7 @@ create table public.cards
 , averagemark float4);
 
 
-create table public.citylist(	City varchar, IsAvailableForPickup bool, CostForDelivery int);
+create table public.citylist(	City varchar, IsAvailableForPickup bool, CostForDelivery int, addresses varchar[]);
 
 create table finishedpurchases
 (

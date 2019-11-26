@@ -4,6 +4,7 @@
 }
 
 <h2>Управление заказами</h2>
+<h4>Нажмите на кнопку для перехода на следующую "стадию"</h4>
 
 @foreach (var element in ViewBag.Data)
 {
@@ -11,7 +12,7 @@
     <form method="post">
         <input type="submit" value="@element.Condition" name="Condition"/>
         <input type="number" hidden name="Id" value="@element.Id" name="Id"/>
-    </form>
+    </form> <br/>
    
 }
 

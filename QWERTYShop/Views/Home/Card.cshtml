@@ -2,15 +2,12 @@
 @{
     ViewBag.Title = "Card";
 }
-
-    <head>
-        <link rel="stylesheet" href="~/Content/Styles.css">
-    </head>
-
+<head>
+    <link rel="stylesheet" href="~/Content/Styles.css">
+</head>
 <h2>@Model.Name</h2>
 <img src="@Model.Image">
-
-@if (ViewBag.AverageMark != -1)
+@if (ViewBag.AverageMark != "-1")
 {
     <p>средняя оценка покупателей составляет @ViewBag.AverageMark</p>
 }
@@ -28,8 +25,39 @@ else
         <p>@element.Name @element.Cost @element.Image <input class="button" value="Подробнее" type="submit" onClick='location.href="http://localhost:52905/card/@element.Id"' /></p>
     }
 }
-
 @for (int i = 0; i < ViewBag.Properties.Count; i++)
 {
-<p>@ViewBag.NamesOfProperties[i]  :  @ViewBag.Properties[i]</p>
+    <p>@ViewBag.NamesOfProperties[i]  :  @ViewBag.Properties[i]</p>
 }
+
+<h2>Отзывы</h2>
+@if (User.Identity.IsAuthenticated)
+{
+    <form method="post">
+        <textarea name="comment" cols="100" required></textarea> <br />
+        <input type="number" value="@long.Parse(Request.Url.ToString().Split('/')[4])" name="comment" hidden />
+        <input type="text" value="@User.Identity.Name" name="comment" hidden />
+        <input type="submit" value="Оставить отзыв" />
+        <select name="comment">
+            @for (int i = 0; i <= 10; i++)
+            {
+                <option>@i</option>
+            }
+        </select>
+    </form>
+}
+else
+{
+    <p> <b>Авторизуйтесь для того, чтобы оставлять отзывы!</b> </p>
+}
+@foreach (var element in ViewBag.Commentaries)
+{
+    <p>@element</p> <br />
+}
+<style>
+
+    textarea {
+        resize: none;
+        height: 150px;
+    }
+</style>

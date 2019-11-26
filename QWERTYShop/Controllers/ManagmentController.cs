@@ -37,7 +37,7 @@ namespace QWERTYShop.Controllers
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                 {
                     connection.Open();
-                    NpgsqlCommand command = new NpgsqlCommand("INSERT INTO public.citylist(City, IsAvailableForPickup, CostForDelivery) VALUES (@c, @i, @cfd)", connection);
+                    NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO public.citylist(City, IsAvailableForPickup, CostForDelivery, addresses) VALUES (@c, @i, @cfd, '{{}}')", connection);
                     command.Parameters.AddWithValue("c", model.City);
                     command.Parameters.AddWithValue("i", model.IsAvailableForPickup);
                     command.Parameters.AddWithValue("cfd", model.CostForDelivery);
@@ -725,6 +725,28 @@ namespace QWERTYShop.Controllers
             else
                 ViewBag.Message = $"Успешно удалена фильтрация по свойству: {propertyName} из категории {type}";
 
+        }
+
+        public ActionResult PickupLocation()
+        {
+            ViewBag.Message = "";
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult PickupLocation(List<string> list)
+        {
+            using (var connection=new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                var cmd = new NpgsqlCommand(
+                    $"update citylist set addresses=addresses || '{{\"{list[1]}\"}}' where city='{list[0]}'", connection);
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+
+            ViewBag.Message = "Успешно!";
+            return View();
         }
     }
 }
