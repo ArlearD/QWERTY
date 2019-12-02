@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "_SearchPartial";
+}
+
+@using (Html.BeginForm("Search", "Home", FormMethod.Post))
+{
+    <p>
+        <input type="text" name="search" style="background-color: dimgray"/>
+        <input type="submit" value="Поиск"/>
+    </p>
+}
+
+
+
+

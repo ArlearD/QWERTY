@@ -4,12 +4,28 @@
 }
 
 <h2>Меню управлением точек самовывоза</h2>
-@ViewBag.Message
-<form method="post">
-    <p>Введите название города</p>
-    <input type="text" name="list" required/> <br/>
-    <p>Введите адрес точки самовывоза</p>
-    <input type="text" name="list" required=""/> <br/>
-    <input type="submit" value="Добавить"/>
-</form>
+@if (ViewBag.CityList.Count != 0)
+{
+<p style="color:green">@ViewBag.Message</p>
+    <p>Выберите город</p>
+    <form method="post">
+        <select name="list">
+            @foreach (var element in ViewBag.CityList)
+            {
+                <option>@element</option>
+                <br />
+            }
+        </select>
+        <p>Введите адрес точки самовывоза</p>
+        <input type="text" name="list" required="" />
+        <br />
+        <input type="submit" value="Добавить" />
+    </form>
+}
+else
+{
+    <p>На данный момент база данных городов пуста, добавьте хоть один город, чтобы добавить адрес самовывоза! </p>
+    <p>@Html.ActionLink("Меню добавления городов", "AddNewCity", "Managment")</p>
+}
+
 

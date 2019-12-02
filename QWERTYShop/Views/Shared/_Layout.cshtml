@@ -15,16 +15,18 @@
             <div class="navbar-header">
                 @Html.ActionLink("QWERTYShop", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
+            
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     @if (HttpContext.Current.User.IsInRole("admin"))
                     {
                         <li>@Html.ActionLink("Управление", "Index", "Managment")</li>
                     }
-                <li style="color:darkgray">@Html.ActionLink("Ваш город: " + Session["CityName"], "ChangeCity", "Home") </li>
+                    <li style="color:darkgray">@Html.ActionLink("Ваш город: " + Session["CityName"], "ChangeCity", "Home") </li>
                     <li>@Html.Partial("_CartPartial")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
+                @Html.Partial("_SearchPartial")
             </div>
         </div>
     </div>

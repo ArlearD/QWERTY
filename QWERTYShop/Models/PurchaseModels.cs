@@ -22,7 +22,7 @@ namespace QWERTYShop.Models
         [Required(ErrorMessage = "Заполните это поле!")]
         [Display(Name = "Номер квартиры")]
         [RegularExpression("[0-9]{1,5}", ErrorMessage = "Некорректный номер квартиры")]
-        public int Flat { get; set; }
+        public int? Flat { get; set; }
 
         [Required(ErrorMessage = "Заполните это поле!")] 
         [Display(Name = "Номер телефона с восьмёркой")]

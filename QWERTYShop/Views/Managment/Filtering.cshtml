@@ -17,22 +17,40 @@
     </select>
     <input type="submit" value="Выбрать категорию" />
 </form>
-<br/>
+<br />
 @if (ViewBag.Category != "")
 {
-<p>Выбранная категория: @ViewBag.Category</p>
+    <p>Выбранная категория: @ViewBag.Category</p>
+}
+@if (ViewBag.Properties.Count > 0)
+{
+    <p style="font-weight: bold">Доступные к добавлению свойства:</p>
 }
 @foreach (var element in ViewBag.Properties)
 {
     <form method="post">
-        <p>@element
-            <select name="Operation">
-                <option>Добавить фильтр</option>
-                <option>Удалить</option>
-            </select>
-            <input name="Property" value="@element" hidden/>
-            <input name="Category" value="@ViewBag.Category" hidden/>
-            <input type="submit" value="Выбрать"/>
+        <p>
+            @element
+            <input name="Operation" value="Добавить фильтр" hidden />
+            <input name="Property" value="@element" hidden />
+            <input name="Category" value="@ViewBag.Category" hidden />
+            <input type="submit" value="Добавить" />
+        </p>
+    </form>
+}
+@if (ViewBag.Filters.Count > 0)
+{
+    <p style="font-weight: bold">Фильтрация добавлена по следующим свойствам:</p>
+}
+@foreach (var element in ViewBag.Filters)
+{
+    <form method="post">
+        <p>
+            @element
+            <input name="Operation" value="Удалить" hidden />
+            <input name="Property" value="@element" hidden />
+            <input name="Category" value="@ViewBag.Category" hidden />
+            <input type="submit" value="Удалить" />
         </p>
     </form>
 }

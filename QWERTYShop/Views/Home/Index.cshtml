@@ -4,7 +4,7 @@
 <h1 style="text-align:center">Новинки:</h1>
 <div class="conatiner">
     <div class="wrap">
-        @foreach (var element in @ViewBag.Cards)
+        @foreach (var element in ViewBag.Cards)
         {
             <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
                 <img src="@element.Image">

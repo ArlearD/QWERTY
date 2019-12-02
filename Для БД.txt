@@ -1,4 +1,4 @@
-create table public.cards
+create extension pg_trgm; create table public.cards
 (
     Id bigint,
     Name text,

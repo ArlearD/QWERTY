@@ -304,7 +304,7 @@ namespace QWERTYShop.Controllers
             {
                 var parsedIdsAndCount = idsAndCount[i].Split(':');
                 if (long.Parse(parsedIdsAndCount[0]) == id)
-                    return RedirectToAction("Cart"); //выдавать сообщения, типо товар уже в корзине
+                    return RedirectToAction("Cart");
             }
 
             var currCart = Session["cart"].ToString();
@@ -519,6 +519,7 @@ namespace QWERTYShop.Controllers
 
         public ActionResult PurchaseData()
         {
+            PurchaseModels model = new PurchaseModels { Addresses = "", City = "", House = "", Mail = "", PhoneNumber = "" };
             GetPickupAddresses(Session["CityName"].ToString());
             var currentDate = DateTime.Today.Date;
             List<string> availableDatesOfPickup = new List<string>();
@@ -542,7 +543,7 @@ namespace QWERTYShop.Controllers
 
             ViewBag.AvailableTimesOfDelivery = availableTimesOfDelivery;
             ViewBag.AvailableDatesOfDelivery = availableDatesOfDelivery;
-            return View();
+            return View(model);
         }
 
         [HttpPost]
@@ -584,7 +585,7 @@ namespace QWERTYShop.Controllers
             if (model.Payment == "Оплата онлайн")
             {
                 ViewBag.Message = "Введите поля корректно!";
-                return View();
+                return View(model);
             }
 
             if (ModelState.IsValid)
@@ -593,7 +594,7 @@ namespace QWERTYShop.Controllers
             }
 
             ViewBag.Message = "Введите поля корректно!";
-            return View();
+            return View(model);
         }
 
         private void GetInformation(PurchaseModels model)
@@ -781,6 +782,89 @@ namespace QWERTYShop.Controllers
                 connection.Close();
                 ViewBag.Addresses = addresses;
             }
+        }
+
+        public ActionResult Search()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Search(string search)
+        {
+            Find(search);
+            return View();
+        }
+
+        private void Find(string request)
+        {
+            List<long> idsToOutput = new List<long>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                var cmd = new NpgsqlCommand($"SELECT id, name, word_similarity(name, '{request}') as wsm " +
+                                          $"FROM cards WHERE(word_similarity(name, '{request}')::numeric > 0.1) " +
+                                          $"ORDER BY wsm DESC, name, wsm; ", connection);
+                connection.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (reader.HasRows)
+                    {
+                        idsToOutput.Add(reader.GetInt64(0));
+                    }
+                }
+                connection.Close();
+            }
+
+            List<CardsModels> cards = new List<CardsModels>();
+
+            var card = new CardsModels();
+
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand(GetSelectStringForSearch(idsToOutput), connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            card.Id = reader.GetInt64(0);
+                            card.Name = reader.GetString(1);
+                            card.Type = reader.GetString(2);
+                            card.Image = reader.GetString(4);
+                            card.Information = reader.GetString(5);
+                            card.Cost = reader.GetInt32(6);
+                            cards.Add(card);
+                            card=new CardsModels();
+                        }
+                }
+                connection.Close();
+            }
+
+            ViewBag.Cards = cards;
+        }
+
+        private string GetSelectStringForSearch(List<long> idsToOutput)
+        {
+            var output = "SELECT * FROM public.cards where id=";
+
+            if (idsToOutput.Count == 0)
+                return output += "-1";
+
+            for (int i = 0; i < idsToOutput.Count; i++)
+            {
+                if (i == idsToOutput.Count - 1)
+                {
+                    output += idsToOutput[i].ToString();
+                }
+                else
+                {
+                    output += $"{idsToOutput[i]} or id=";
+                }
+            }
+
+            return output;
         }
     }
 }

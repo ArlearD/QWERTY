@@ -295,6 +295,8 @@
     <Content Include="Views\Managment\AddInformation.cshtml" />
     <Content Include="Views\Managment\Filtering.cshtml" />
     <Content Include="Views\Managment\PickupLocation.cshtml" />
+    <Content Include="Views\Shared\_SearchPartial.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

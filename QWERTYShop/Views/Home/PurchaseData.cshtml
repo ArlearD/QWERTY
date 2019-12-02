@@ -9,22 +9,22 @@
     <form method="post">
         @Html.LabelFor(model => model.City)
         @Html.ValidationMessageFor(model => model.City)<br />
-        <input type="text" name="City" required value="@Session["CityName"]" readonly/> <br /><br />
+        <input type="text" name="City" value="@Session["CityName"]" readonly/> <br /><br />
         @Html.LabelFor(model => model.Street)
         @Html.ValidationMessageFor(model => model.Street)<br />
-        <input type="text" name="Street" required /> <br /><br />
+        <input type="text" name="Street" value="@Model.Street" required /> <br /><br />
         @Html.LabelFor(model => model.House)
         @Html.ValidationMessageFor(model => model.House)<br />
-        <input type="text" name="House" required /> <br /><br />
+        <input type="text" name="House" required value="@Model.House" /> <br /><br />
         @Html.LabelFor(model => model.Flat)
         @Html.ValidationMessageFor(model => model.Flat)<br />
-        <input type="number" name="Flat" required /> <br /><br />
+        <input type="number" name="Flat" required value="@Model.Flat"/> <br /><br />
         @Html.LabelFor(model => model.PhoneNumber)
         @Html.ValidationMessageFor(model => model.PhoneNumber)<br />
-        <input type="number" name="PhoneNumber" required min="80000000000" /> <br /><br />
+        <input type="number" name="PhoneNumber" required value="@Model.PhoneNumber" min="80000000000" /> <br /><br />
         @Html.LabelFor(model => model.Mail)
         @Html.ValidationMessageFor(model => model.Mail)<br />
-        <input type="text" name="Mail" required /> <br /><br />
+        <input type="text" name="Mail" required value="@Model.Mail" /> <br /><br />
         @Html.LabelFor(model => model.DeliveryDate)<br />
         <select name="DeliveryDate">
             @foreach (var element in ViewBag.AvailableDatesOfDelivery)
@@ -59,7 +59,7 @@
         <input type="text" name="City" required value="@Session["CityName"]" readonly /> <br /><br />
         @Html.LabelFor(model => model.Mail)
         @Html.ValidationMessageFor(model => model.Mail)<br />
-        <input type="text" name="Mail" required /> <br /><br />
+        <input type="text" name="Mail" required value="@Model.Mail"/> <br /><br />
         @Html.LabelFor(model => model.Addresses) <br/>
         <select>
             @foreach (var address in ViewBag.Addresses)

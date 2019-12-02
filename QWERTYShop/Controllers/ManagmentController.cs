@@ -44,11 +44,11 @@ namespace QWERTYShop.Controllers
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
-                @ViewBag.AddNewCitySuccess = "Успешно!";
+                ViewBag.AddNewCitySuccess = "Успешно!";
             }
             else
             {
-                @ViewBag.AddNewCitySuccess = "Что-то пошло не так, попробуйте снова!";
+                ViewBag.AddNewCitySuccess = "Что-то пошло не так, попробуйте снова!";
             }
             GetViewOfCity();
             return View();
@@ -105,12 +105,30 @@ namespace QWERTYShop.Controllers
 
                 while (dataReader.Read())
                 {
-                    properties = (string[])dataReader.GetValue(0);
+                    properties = ((string[])dataReader.GetValue(0)).OrderBy(x => x).ToArray();
                 }
                 connection.Close();
             }
-
             ViewBag.Properties = properties;
+        }
+
+        private List<string> GetListOfProperties(string type)
+        {
+            List<string> properties = null;
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"Select properties from types where type='{type}'", connection);
+
+                NpgsqlDataReader dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    properties = ((string[])dataReader.GetValue(0)).OrderBy(x => x).ToList();
+                }
+                connection.Close();
+            }
+            return properties;
         }
 
         [Route("RemoveCity/{city}")]
@@ -665,6 +683,7 @@ namespace QWERTYShop.Controllers
         public ActionResult Filtering()
         {
             GetCategories();
+            ViewBag.Filters = new List<string>();
             ViewBag.Properties = new List<string>();
             ViewBag.Category = "";
             return View();
@@ -673,15 +692,38 @@ namespace QWERTYShop.Controllers
         [HttpPost]
         public ActionResult Filtering(List<string> Category, FilteringModels model)
         {
+            DoCommand(model.Operation, model.Property, Category[0]);
             GetCategories();
-            GetProperties(Category[0]);
+            var properties = GetListOfProperties(Category[0]);
+            var filters = GetFilters(Category[0]);
+            filters = properties.Intersect(filters).ToList();
+            properties = properties.Except(filters).ToList();
+            ViewBag.Properties = properties;
+            ViewBag.Filters = filters;
             ViewBag.Category = Category[0];
             if (model.Operation == null)
             {
                 return View();
             }
-            DoCommand(model.Operation, model.Property, Category[0]);
             return View(model);
+        }
+
+        private List<string> GetFilters(string category)
+        {
+            List<string> properties = new List<string>();
+            using (var connection = new NpgsqlConnection(ConnectionString)) //получение свойств
+            {
+                connection.Open();
+                var cmd = new NpgsqlCommand($"select choosefilter from types where type='{category}'", connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    properties = ((string[])reader.GetValue(0)).OrderBy(x => x).ToList();
+                }
+                connection.Close();
+            }
+
+            return properties;
         }
 
         private void GetCategories()
@@ -729,6 +771,7 @@ namespace QWERTYShop.Controllers
 
         public ActionResult PickupLocation()
         {
+            GetViewOfCity();
             ViewBag.Message = "";
             return View();
         }
@@ -736,7 +779,8 @@ namespace QWERTYShop.Controllers
         [HttpPost]
         public ActionResult PickupLocation(List<string> list)
         {
-            using (var connection=new NpgsqlConnection(ConnectionString))
+            GetViewOfCity();
+            using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
                 var cmd = new NpgsqlCommand(

@@ -3,17 +3,16 @@
     ViewBag.Title = "AddNewCity";
 }
 @model QWERTYShop.Models.AddNewCityModels
-
 <form method="post" align="center">
     <br />
     <br />
-    <p>@ViewBag.AddNewCitySuccess</p>
+    <p style="color:green">@ViewBag.AddNewCitySuccess</p>
     @Html.LabelFor(model => model.City)
     @Html.ValidationMessageFor(model => model.City)
     <br />
     <input type="text" name="City" required />
     <br />
-    @Html.LabelFor(model=>model.IsAvailableForPickup)
+    @Html.LabelFor(model => model.IsAvailableForPickup)
     <br />
     @Html.CheckBoxFor(model => model.IsAvailableForPickup)
     <br />
@@ -25,12 +24,16 @@
     <br />
     <input type="submit" value="Добавить" />
 </form>
-<p>На данный момент добавлены следующие города:</p>
-@foreach (var element in ViewBag.CityList)
+@if (ViewBag.CityList.Count > 0)
 {
-    <p>@element <input class="button" value="Удалить" type="submit" onClick='location.href="http://localhost:52905/removecity/@element"' /></p>
+    <p style="font-weight: bold">На данный момент добавлены следующие города:</p>
+    foreach (var element in ViewBag.CityList)
+    {
+        <p>@element <input class="button" value="Удалить" type="submit" onClick='location.href="http://localhost:52905/removecity/@element"' /></p>
+    }
 }
-
-
+else
+{
+    <p>На данный момент база данных городов пуста!</p>
+}
 <p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
-
