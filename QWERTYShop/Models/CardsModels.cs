@@ -30,6 +30,10 @@ namespace QWERTYShop.Models
         [Required(ErrorMessage = "Введите тип продукта")]
         public string Type { get; set; }
 
+        [Display(Name="Также можете просто загрузить картинку на сервер(.jpg .jpeg .png). " +
+                      "Обратите внимание на то, что если вы загрузите и то и другое, то выведется вариант с ссылкой")]
+        public HttpPostedFileBase Upload { get; set; }
+
         public override string ToString()
         {
             return $"Id:={Id} Name:={Name} Cost:={Cost} Image:={Image} Information:={Information} Type:={Type}";

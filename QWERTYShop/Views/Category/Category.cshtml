@@ -53,7 +53,40 @@
         @foreach (var element in ViewBag.Cards)
         {
             <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
-                <img src="@element.Image">
+                @if (element.Image == null || element.Image == "")
+                {
+                    var relativePath = "~/Images/" + element.Id + ".jpg";
+                    var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                    if (File.Exists(absolutePath))
+                    {
+                        var imagePath = element.Id + ".jpg";
+                        <img src="~/Images/@imagePath"/>
+                    }
+                    else
+                    {
+                        relativePath = "~/Images/" + element.Id + ".png";
+                        absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                        if (File.Exists(absolutePath))
+                        {
+                            var imagePath = element.Id + ".png";
+                            <img src="~/Images/@imagePath"/>
+                        }
+                        else
+                        {
+                            relativePath = "~/Images/" + element.Id + ".jpeg";
+                            absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                            if (File.Exists(absolutePath))
+                            {
+                                var imagePath = element.Id + ".jpeg";
+                                <img src="~/Images/@imagePath" alt="@element.Image" />
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    <img src="@element.Image">
+                }
                 <div class="product-list">
                     <h3>@element.Name</h3>
                     <span class="price">₽ @element.Cost</span>

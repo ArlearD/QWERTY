@@ -63,7 +63,7 @@ namespace QWERTYShop.Controllers
         [HttpPost]
         public ActionResult AddNewCard(CardsModels cardsModels)
         {
-            Thread.Sleep(50);
+            Thread.Sleep(5);
             GetTypes();
             if (ModelState.IsValid)
             {
@@ -71,6 +71,14 @@ namespace QWERTYShop.Controllers
                 return Redirect($"/AddInformation/{cardsModels.Type}");
             }
             return View();
+        }
+
+        private void UploadImage(HttpPostedFileBase upload, long id)
+        {
+            string extension = System.IO.Path.GetFileName(upload.FileName).Split('.').Last();
+            string fileName = "";
+            fileName += id + "."+ extension;
+            upload.SaveAs(Server.MapPath("~/Images/" + fileName));
         }
 
 
@@ -639,6 +647,12 @@ namespace QWERTYShop.Controllers
                     cardsModels.Id++;
                 }
                 connection.Close();
+            }
+
+            HttpPostedFileBase upload = cardsModels.Upload;
+            if (upload != null)
+            {
+                UploadImage(upload, cardsModels.Id);
             }
 
             Session["Type"] = cardsModels.Type;
