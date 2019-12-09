@@ -6,93 +6,167 @@
     <link rel="stylesheet" href="~/Content/Styles.css" />
 </head>
 
-<h2>@ViewBag.category</h2>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown img.flag").addClass("flagvisibility");
 
-<form method="post">
-    По убыванию @Html.CheckBoxFor(x => x.IsDescending)
-    <select name="Method">
-        @if (ViewBag.Sorted == "По рейтингу")
-        {
-            <option selected>По рейтингу</option>
-            <option>По цене</option>
-        }
-        else
-        {
-            <option>По рейтингу</option>
-            <option selected>По цене</option>
-        }
-    </select>
-    <br />
-    <p>Фильтр по цене:</p>
-    От: <input type="number" min="0" name="FromPrice" value="@ViewBag.Values[0]" /> До: <input type="number" min="0" value="@ViewBag.Values[1]" name="ToPrice" />
-    <br />
-    <p>Фильтр по рейтингу:</p>
-    От: <input type="number" min="0" max="10" name="FromRating" value="@ViewBag.Values[2]" /> До: <input type="number" min="0" name="ToRating" value="@ViewBag.Values[3]" />
-    <br />
-    <br />
-    @{
-        int i = 0;
-        foreach (var property in ViewBag.Dictionary)
-        {
-            <p style="color: cornflowerblue">@property.Key</p>
-            foreach (var value in property.Value)
-            {
-            <p>@Html.CheckBoxFor(x => x.Check[i]) @value.Value</p>
-                i++;
+            $(".dropdown dt a").click(function () {
+                $(".dropdown dd ul").toggle();
+            });
+
+            $(".dropdown dd ul li a").click(function () {
+                var text = $(this).html();
+                $(".dropdown dt a span").html(text);
+                $(".dropdown dd ul").hide();
+                $("#result").html("Selected value is: " + getSelectedValue("sample"));
+            });
+
+            function getSelectedValue(id) {
+                return $("#" + id).find("dt a span.value").html();
             }
-        }
-    }
-    <br/>
-    <input type="submit" value="Отсортировать!" />
 
-</form>
+            $(document).bind('click', function (e) {
+                var $clicked = $(e.target);
+                if (!$clicked.parents().hasClass("dropdown"))
+                    $(".dropdown dd ul").hide();
+            });
 
 
-<div class="conatiner">
-    <div class="wrap">
-        @foreach (var element in ViewBag.Cards)
-        {
-            <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
-                @if (element.Image == null || element.Image == "")
-                {
-                    var relativePath = "~/Images/" + element.Id + ".jpg";
-                    var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
-                    if (File.Exists(absolutePath))
-                    {
-                        var imagePath = element.Id + ".jpg";
-                        <img src="~/Images/@imagePath"/>
-                    }
-                    else
-                    {
-                        relativePath = "~/Images/" + element.Id + ".png";
-                        absolutePath = HttpContext.Current.Server.MapPath(relativePath);
-                        if (File.Exists(absolutePath))
+            $("#flagSwitcher").click(function () {
+                $(".dropdown img.flag").toggleClass("flagvisibility");
+            });
+        });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+            });
+        });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<h2>@ViewBag.category</h2>
+<body>
+    <div style="margin-left:40px;width: auto;" class="container">
+        <div style="width: 130px;" class="col-md-4 col-xs-12 sidebar">
+            <section style="width:500px" class="sky-form">
+                <form method="post">
+                    По убыванию @Html.CheckBoxFor(x => x.IsDescending)
+                    <br />
+                    <select style="border:none;border-top:groove;border-left:groove;" name="Method">
+                        @if (ViewBag.Sorted == "По рейтингу")
                         {
-                            var imagePath = element.Id + ".png";
-                            <img src="~/Images/@imagePath"/>
+                            <option selected>По рейтингу</option>
+                            <option>По цене</option>
                         }
                         else
                         {
-                            relativePath = "~/Images/" + element.Id + ".jpeg";
-                            absolutePath = HttpContext.Current.Server.MapPath(relativePath);
-                            if (File.Exists(absolutePath))
-                            {
-                                var imagePath = element.Id + ".jpeg";
-                                <img src="~/Images/@imagePath" alt="@element.Image" />
-                            }
+                            <option>По рейтингу</option>
+                            <option selected>По цене</option>
+                        }
+                    </select>
+                    <hr />
+                    <br />
+                    <p>Фильтр по цене:</p>
+                    От: <input style="width:90px;border:none;border-top:groove;border-left:groove;" type="number" min="0" name="FromPrice" value="@ViewBag.Values[0]" /> До: <input style="width:90px;border:none;border-top:groove;border-left:groove;" type="number" min="0" value="@ViewBag.Values[1]" name="ToPrice" />
+                    <br />
+                    <p>Фильтр по рейтингу:</p>
+                    От: <input style="width:40px;border:none;border-top:groove;border-left:groove;" type="number" min="0" max="10" name="FromRating" value="@ViewBag.Values[2]" /> До: <input style="width:40px;border:none;border-top:groove;border-left:groove;" type="number" min="0" name="ToRating" value="@ViewBag.Values[3]" />
+                    <br />
+                    <hr />
+                    @{
+                        int i = 0;
+                        foreach (var property in ViewBag.Dictionary)
+                        {
+
+                            <h4>@property.Key</h4>
+                            <div class="row row1 scroll-pane">
+                                <div class="col col-4">
+                                    @foreach (var value in property.Value)
+                                    {
+                                        <p>@Html.CheckBoxFor(x => x.Check[i]) @value.Value</p>
+                                        i++;
+                                    }
+                                </div>
+                            </div>
                         }
                     }
-                }
-                else
+                    <hr />
+                    <div class="form-group">
+                        <div class="buttons">
+                            <button class="grey">Отсортировать</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div class="col-md-8 col-xs-12 main">
+            <div class="wrap">
+                @foreach (var element in ViewBag.Cards)
                 {
-                    <img src="@element.Image">
+                    <div onClick='location.href="http://localhost:52905/Card/@element.Id"' class="product-item">
+                        @if (element.Image == null || element.Image == "")
+                        {
+                            var relativePath = "~/Images/" + element.Id + ".jpg";
+                            var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                            if (File.Exists(absolutePath))
+                            {
+                                var imagePath = element.Id + ".jpg";
+                                <img src="~/Images/@imagePath" />
+                            }
+                            else
+                            {
+                                relativePath = "~/Images/" + element.Id + ".png";
+                                absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                if (File.Exists(absolutePath))
+                                {
+                                    var imagePath = element.Id + ".png";
+                                    <img src="~/Images/@imagePath" />
+                                }
+                                else
+                                {
+                                    relativePath = "~/Images/" + element.Id + ".jpeg";
+                                    absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                    if (File.Exists(absolutePath))
+                                    {
+                                        var imagePath = element.Id + ".jpeg";
+                                        <img src="~/Images/@imagePath" alt="@element.Image" />
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <img src="@element.Image">
+                        }
+                        <div class="product-list">
+                            <h3>@element.Name</h3>
+                            <span class="price">₽ @element.Cost</span>
+                            <h4>@Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</h4>
+                        </div>
+                    </div>
                 }
-                <div class="product-list">
-                    <h3>@element.Name</h3>
-                    <span class="price">₽ @element.Cost</span>
-                    <h4>@Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</h4>
-                </div>
             </div>
-        }
+        </div>
+        <div class="clear"></div>
     </div>
-</div>
+</body>
