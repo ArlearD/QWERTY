@@ -5,92 +5,205 @@
 <head>
     <link rel="stylesheet" href="~/Content/Styles.css">
 </head>
-<h2>@Model.Name</h2>
-@if (Model.Image == null || Model.Image == "")
-{
-    var relativePath = "~/Images/" + Model.Id + ".jpg";
-    var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
-    if (File.Exists(absolutePath))
-    {
-        var imagePath = Model.Id + ".jpg";
-        <img src="~/Images/@imagePath"/>
-    }
-    else
-    {
-        relativePath = "~/Images/" + Model.Id + ".png";
-        absolutePath = HttpContext.Current.Server.MapPath(relativePath);
-        if (File.Exists(absolutePath))
-        {
-            var imagePath = Model.Id + ".png";
-            <img src="~/Images/@imagePath"/>
-        }
-        else
-        {
-            relativePath = "~/Images/" + Model.Id + ".jpeg";
-            absolutePath = HttpContext.Current.Server.MapPath(relativePath);
-            if (File.Exists(absolutePath))
-            {
-                var imagePath = Model.Id + ".jpeg";
-                <img src="~/Images/@imagePath" alt="@Model.Image" />
-            }
-        }
-    }
-}
-else
-{
-    <img src="@Model.Image">
-}
-@if (ViewBag.AverageMark != "-1")
-{
-    <p>средняя оценка покупателей составляет @ViewBag.AverageMark</p>
-}
-else
-{
-    <p>оценок на данный товар еще нет</p>
-}
-<input class="buttons" value="Купить" type="submit" onClick='location.href="http://localhost:52905/AddToCard/@Model.Id"' />
-<br />
-@if (ViewBag.PurchasedId.Count != 0)
-{
-    <p>С этим товаром покупают:<br /></p>
-    foreach (var element in ViewBag.PurchasedId)
-    {
-        <p>@element.Name @element.Cost @element.Image <input class="button" value="Подробнее" type="submit" onClick='location.href="http://localhost:52905/card/@element.Id"' /></p>
-    }
-}
-@for (int i = 0; i < ViewBag.Properties.Count; i++)
-{
-    <p>@ViewBag.NamesOfProperties[i]  :  @ViewBag.Properties[i]</p>
-}
 
-<h2>Отзывы</h2>
-@if (User.Identity.IsAuthenticated)
-{
-    <form method="post">
-        <textarea name="comment" cols="100" required></textarea> <br />
-        <input type="number" value="@long.Parse(Request.Url.ToString().Split('/')[4])" name="comment" hidden />
-        <input type="text" value="@User.Identity.Name" name="comment" hidden />
-        <input type="submit" value="Оставить отзыв" />
-        <select name="comment">
-            @for (int i = 0; i <= 10; i++)
-            {
-                <option>@i</option>
-            }
-        </select>
-    </form>
-}
-else
-{
-    <p> <b>Авторизуйтесь для того, чтобы оставлять отзывы!</b> </p>
-}
-@foreach (var element in ViewBag.Commentaries)
-{
-    <p>@element</p> <br />
-}
-<style>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown img.flag").addClass("flagvisibility");
 
-    textarea {
-        resize: none;
-        height: 150px;
-    }
-</style>
+            $(".dropdown dt a").click(function () {
+                $(".dropdown dd ul").toggle();
+            });
+
+            $(".dropdown dd ul li a").click(function () {
+                var text = $(this).html();
+                $(".dropdown dt a span").html(text);
+                $(".dropdown dd ul").hide();
+                $("#result").html("Selected value is: " + getSelectedValue("sample"));
+            });
+
+            function getSelectedValue(id) {
+                return $("#" + id).find("dt a span.value").html();
+            }
+
+            $(document).bind('click', function (e) {
+                var $clicked = $(e.target);
+                if (!$clicked.parents().hasClass("dropdown"))
+                    $(".dropdown dd ul").hide();
+            });
+
+
+            $("#flagSwitcher").click(function () {
+                $(".dropdown img.flag").toggleClass("flagvisibility");
+            });
+        });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+            });
+        });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+
+
+
+
+<body>
+    <div class="wrap">
+        <div class="conatiner">
+            <div class="row">
+                <div class="col-xs-6" id="left-column">
+                    <div class="product-item">
+                        <h2>@Model.Name</h2>
+                        @if (Model.Image == null || Model.Image == "")
+                        {
+                            var relativePath = "~/Images/" + Model.Id + ".jpg";
+                            var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                            if (File.Exists(absolutePath))
+                            {
+                                var imagePath = Model.Id + ".jpg";
+                                <img src="~/Images/@imagePath" />
+                            }
+                            else
+                            {
+                                relativePath = "~/Images/" + Model.Id + ".png";
+                                absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                if (File.Exists(absolutePath))
+                                {
+                                    var imagePath = Model.Id + ".png";
+                                    <img src="~/Images/@imagePath" />
+                                }
+                                else
+                                {
+                                    relativePath = "~/Images/" + Model.Id + ".jpeg";
+                                    absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                    if (File.Exists(absolutePath))
+                                    {
+                                        var imagePath = Model.Id + ".jpeg";
+                                        <img src="~/Images/@imagePath" alt="@Model.Image" />
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <img src="@Model.Image">
+                        }
+                        @if (ViewBag.AverageMark != "-1")
+                        {
+                            <h3>Средняя оценка покупателей составляет @ViewBag.AverageMark</h3>
+                        }
+                        else
+                        {
+                            <h3>Оценок на данный товар еще нет</h3>
+                        }
+                        <input class="buttons" value="Купить" type="submit" onClick='location.href="http://localhost:52905/AddToCard/@Model.Id"' />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" id="right-column">
+                @for (int i = 0; i < ViewBag.Properties.Count; i++)
+                {
+                    <p>@ViewBag.NamesOfProperties[i]:  @ViewBag.Properties[i]</p>
+                }
+                <h2>Отзывы</h2>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form method="post">
+                        <textarea style="width:800px;height:60px;border:none;border-top:groove;border-left:groove;" name="comment" cols="100" required></textarea> <br />
+                        <input type="number" value="@long.Parse(Request.Url.ToString().Split('/')[4])" name="comment" hidden />
+                        <input type="text" value="@User.Identity.Name" name="comment" hidden />
+                        <div class="form-group">
+                            <div class="buttons">
+                                <button class="grey">Оставить отзыв</button>
+                            </div>
+                        </div>
+                        <select style="border:none;border-top:groove;border-left:groove;" name="comment">
+                            @for (int i = 0; i <= 5; i++)
+                            {
+                                <option>@i</option>
+                            }
+                        </select>
+                    </form>
+                }
+                else
+                {
+                    <p> <b>Авторизуйтесь для того, чтобы оставлять отзывы!</b> </p>
+                }
+                <br />
+                <hr />
+                @foreach (var element in ViewBag.Commentaries)
+                {
+                    <p>@element</p>
+                    <br />
+                }
+            </div>
+            <h3>С этим товаром покупают:<br /></h3>
+            <div  class="img-thumbnail">
+                @if (ViewBag.PurchasedId.Count != 0)
+                {
+                    foreach (var element in ViewBag.PurchasedId)
+                    {
+                        <a style="color:red " href="~/card/@element.Id">@element.Name</a>
+                        if (element.Image == null || element.Image == "")
+                        {
+                            var relativePath = "~/Images/" + element.Id + ".jpg";
+                            var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                            if (File.Exists(absolutePath))
+                            {
+                                var imagePath = element.Id + ".jpg";
+                                <img style="max-height:200px; max-width:200px" src="~/Images/@imagePath" />
+                            }
+                            else
+                            {
+                                relativePath = "~/Images/" + element.Id + ".png";
+                                absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                if (File.Exists(absolutePath))
+                                {
+                                    var imagePath = element.Id + ".png";
+                                    <img style="max-height:200px; max-width:200px" src="~/Images/@imagePath" />
+                                }
+                                else
+                                {
+                                    relativePath = "~/Images/" + element.Id + ".jpeg";
+                                    absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                    if (File.Exists(absolutePath))
+                                    {
+                                        var imagePath = element.Id + ".jpeg";
+                                        <img style="max-height:200px; max-width:200px" src="~/Images/@imagePath" alt="@element.Image" />
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <img style="max-height:200px; max-width:200px" src="@Model.Image">
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</body>

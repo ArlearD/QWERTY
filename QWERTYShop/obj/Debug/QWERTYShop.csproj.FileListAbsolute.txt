@@ -1629,3 +1629,4 @@ C:\Users\Arleard\Documents\GitHub\QWERTY\QWERTYShop\obj\Debug\QWERTYShop.csproj.
 C:\Users\Arleard\Documents\GitHub\QWERTY\QWERTYShop\obj\Debug\QWERTYShop.dll
 C:\Users\Arleard\Documents\GitHub\QWERTY\QWERTYShop\obj\Debug\QWERTYShop.pdb
 C:\Users\Arleard\Documents\GitHub\QWERTY\QWERTYShop\bin\Content\Styles.css
+C:\Users\Arleard\Documents\GitHub\QWERTY\QWERTYShop\bin\Images\logo.png
