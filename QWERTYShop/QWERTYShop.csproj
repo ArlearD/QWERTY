@@ -246,6 +246,7 @@
     <Content Include="Images\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\logo1.png" />
     <Content Include="Images\loupe.svg" />
     <Content Include="Images\shopping-cart.svg" />
     <Content Include="js\easing.js" />
