@@ -2,38 +2,118 @@
 @{
     ViewBag.Title = "PurchaseData";
 }
-<h2>Данные покупки</h2>
-<p style="color:red">@ViewBag.Message</p>
-@if (Session["Delivery"].ToString() == "Доставка до квартиры")
-{
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
+
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
+
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
+
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
+
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
+
+
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <h2>Данные покупки</h2>
+        <p style="color:red">@ViewBag.Message</p>
+        @if (Session["Delivery"].ToString() == "Доставка до квартиры")
+        {
     <form method="post">
         @Html.LabelFor(model => model.City)
-        @Html.ValidationMessageFor(model => model.City)<br />
-        <input type="text" name="City" value="@Session["CityName"]" readonly/> <br /><br />
+        <br />
+        <input style="border:none;border-top:groove;border-left:groove;" type="text" name="City" value="@Session["CityName"]" readonly />
+        <text style="color:red">
+            @Html.ValidationMessageFor(model => model.City)
+        </text><br /><br />
         @Html.LabelFor(model => model.Street)
-        @Html.ValidationMessageFor(model => model.Street)<br />
-        <input type="text" name="Street" value="@Model.Street" required /> <br /><br />
+        <br />
+        <input style="border:none;border-top:groove;border-left:groove;" type="text" name="Street" value="@Model.Street" required />
+        <text style="color:red">
+            @Html.ValidationMessageFor(model => model.Street)
+        </text><br /><br />
         @Html.LabelFor(model => model.House)
-        @Html.ValidationMessageFor(model => model.House)<br />
-        <input type="text" name="House" required value="@Model.House" /> <br /><br />
+        <br />
+        <input style="border:none;border-top:groove;border-left:groove;" type="text" name="House" required value="@Model.House" />
+        <text style="color:red">
+            @Html.ValidationMessageFor(model => model.House)
+        </text><br /><br />
         @Html.LabelFor(model => model.Flat)
-        @Html.ValidationMessageFor(model => model.Flat)<br />
-        <input type="number" name="Flat" required value="@Model.Flat"/> <br /><br />
+        <br />
+        <input style="border:none;border-top:groove;border-left:groove;" type="number" name="Flat" required value="@Model.Flat" />
+        <text style="color:red">
+            @Html.ValidationMessageFor(model => model.Flat)
+        </text><br /><br />
         @Html.LabelFor(model => model.PhoneNumber)
-        @Html.ValidationMessageFor(model => model.PhoneNumber)<br />
-        <input type="number" name="PhoneNumber" required value="@Model.PhoneNumber" min="80000000000" /> <br /><br />
+        <br />
+        <input style="border:none;border-top:groove;border-left:groove;" type="number" name="PhoneNumber" required value="@Model.PhoneNumber" min="80000000000" />
+        <text style="color:red">
+            @Html.ValidationMessageFor(model => model.PhoneNumber)
+        </text><br /><br />
         @Html.LabelFor(model => model.Mail)
-        @Html.ValidationMessageFor(model => model.Mail)<br />
-        <input type="text" name="Mail" required value="@Model.Mail" /> <br /><br />
+        <br />
+        <input style="border:none;border-top:groove;border-left:groove;" type="text" name="Mail" required value="@Model.Mail" />
+        <text style="color:red">
+            @Html.ValidationMessageFor(model => model.Mail)
+        </text><br /><br />
         @Html.LabelFor(model => model.DeliveryDate)<br />
-        <select name="DeliveryDate">
+        <select style="border:none;border-top:groove;border-left:groove;" name="DeliveryDate">
             @foreach (var element in ViewBag.AvailableDatesOfDelivery)
             {
                 <option>@element</option>
             }
         </select><br /><br />
         @Html.LabelFor(model => model.DeliveryTime)<br />
-        <select name="DeliveryTime">
+        <select style="border:none;border-top:groove;border-left:groove;" name="DeliveryTime">
             @foreach (var element in ViewBag.AvailableTimesOfDelivery)
             {
                 <option>@element</option>
@@ -43,49 +123,57 @@
         <input type="text" name="PickupDate" hidden value="23.05.2000" />
         <input type="text" name="Method" hidden value="DeliveryToHouse" />
         <p>Выберите тип оплаты:</p>
-        <select name="Payment">
+        <select style="border:none;border-top:groove;border-left:groove;" name="Payment">
             <option>Оплата онлайн</option>
             <option>Наличными курьеру</option>
             <option>Картой курьеру</option>
         </select>
-        <input type="submit" value="продолжить" />
+        <br />
+        <br />
+        <div class="form-group">
+            <div class="buttons">
+                <button class="grey">Продолжить</button>
+            </div>
+        </div>
     </form>
-}
-@if (Session["Delivery"].ToString() == "Самовывоз")
-{
-    <form method="post">
-        @Html.LabelFor(model => model.City)
-        @Html.ValidationMessageFor(model => model.City)<br />
-        <input type="text" name="City" required value="@Session["CityName"]" readonly /> <br /><br />
-        @Html.LabelFor(model => model.Mail)
-        @Html.ValidationMessageFor(model => model.Mail)<br />
-        <input type="text" name="Mail" required value="@Model.Mail"/> <br /><br />
-        @Html.LabelFor(model => model.Addresses) <br/>
-        <select>
-            @foreach (var address in ViewBag.Addresses)
-            {
-                <option>@address</option>
-            }
-        </select> <br /><br />
-        <input type="text" name="Street" hidden value="Короленко" />
-        <input type="text" name="House" hidden value="45" />
-        <input type="number" name="Flat" hidden value="113" />
-        <input type="number" name="PhoneNumber" hidden value="89673799993" />
-        <input type="text" name="DeliveryDate" hidden value="30.06.2020" />
-        @Html.LabelFor(x => x.PickupDate) <br />
-        <select name="PickupDate">
-            @foreach (var element in ViewBag.AvailableDatesOfPickup)
-            {
-                <option>@element</option>
-            }
-        </select>
-        <input type="text" name="Method" hidden value="Pickup" />
-        <p>Выберите тип оплаты:</p>
-        <select name="Payment">
-            <option>Оплата онлайн</option>
-            <option>Наличными в пункте выдачи заказа</option>
-            <option>Картой в пункте выдачи заказа</option>
-        </select>
-        <input type="submit" value="продолжить" />
-    </form>
-}
+        }
+        @if (Session["Delivery"].ToString() == "Самовывоз")
+        {
+            <form method="post">
+                @Html.LabelFor(model => model.City)
+                @Html.ValidationMessageFor(model => model.City)<br />
+                <input type="text" name="City" required value="@Session["CityName"]" readonly /> <br /><br />
+                @Html.LabelFor(model => model.Mail)
+                @Html.ValidationMessageFor(model => model.Mail)<br />
+                <input type="text" name="Mail" required value="@Model.Mail" /> <br /><br />
+                @Html.LabelFor(model => model.Addresses) <br />
+                <select>
+                    @foreach (var address in ViewBag.Addresses)
+                    {
+                        <option>@address</option>
+                    }
+                </select> <br /><br />
+                <input type="text" name="Street" hidden value="Короленко" />
+                <input type="text" name="House" hidden value="45" />
+                <input type="number" name="Flat" hidden value="113" />
+                <input type="number" name="PhoneNumber" hidden value="89673799993" />
+                <input type="text" name="DeliveryDate" hidden value="30.06.2020" />
+                @Html.LabelFor(x => x.PickupDate) <br />
+                <select name="PickupDate">
+                    @foreach (var element in ViewBag.AvailableDatesOfPickup)
+                    {
+                        <option>@element</option>
+                    }
+                </select>
+                <input type="text" name="Method" hidden value="Pickup" />
+                <p>Выберите тип оплаты:</p>
+                <select style="border:none;border-top:groove;border-left:groove;" name="Payment">
+                    <option>Оплата онлайн</option>
+                    <option>Наличными в пункте выдачи заказа</option>
+                    <option>Картой в пункте выдачи заказа</option>
+                </select>
+                <input type="submit" value="продолжить" />
+            </form>
+        }
+    </div>
+</body>

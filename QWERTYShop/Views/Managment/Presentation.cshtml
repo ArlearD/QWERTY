@@ -1,41 +1,104 @@
 ﻿@model QWERTYShop.Models.ManagmentSortModels
 <head>
-    <link rel="stylesheet" href="~/Content/Styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
+
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
+
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
+
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
+
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
+
+
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
 </head>
-<h1 align="center">Представление базы данных</h1>
 
-<form method="post">
-    <input class="buttons" align="right" type="submit" value="Remove last" name="Remove">
 
-    <p class="">Сортировка по:</p>
+<body>
+    <div class="wrap">
+        <h2>Представление базы данных</h2>
+        <hr />
+        <form method="post">
+            <button class="grey" align="right" type="submit" value="Remove last" name="Remove">Удалить последний</button>
+            <br />
+            <br />
+            <br />
+            <br />
+            <p class="">Сортировка по:</p>
 
-    <input class="buttons" type="submit" value="ID" name="Id" readonly />
-    <input class="buttons" type="submit" value="Name" name="Name" readonly />
-    <input class="buttons" type="submit" value="Type" name="Type" readonly /><br />
-    @Html.CheckBoxFor(x => x.isDescending) По убыванию
-</form>
-<p align="left"> @Html.ActionLink("Вернуться к добавлению", "AddNewCard", "Managment") </p>
-<p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
-<table width="1000" cellpadding="10" border="1">
-    <tr>
-        <td class="nev">ID</td>
-        <td class="nev">Name</td>
-        <td class="nev">Type</td>
-        <td class="nev">Cost</td>
-        <td class="nev">Information</td>
-    </tr>
-    @foreach (var element in ViewBag.Data)
-    {
-        <tr>
-            <td align="center">@element.Id</td>
-            <td align="center">@element.Name</td>
-            <td align="center">@element.Type</td>
-            <td align="center">@element.Cost</td>
-            <td align="center">@element.Information</td>
-        </tr>
-    }
-</table>
+            <button class="grey" type="submit" value="ID" name="Id" readonly>Id</button>
+            <button class="grey" type="submit" value="Name" name="Name" readonly>Имя</button>
+            <button class="grey" type="submit" value="Type" name="Type" readonly>Тип</button>
+            <br />
+            <br />
+            @Html.CheckBoxFor(x => x.isDescending)По убыванию
+        </form>
+        <p align="left"> @Html.ActionLink("Вернуться к добавлению", "AddNewCard", "Managment") </p>
+        <p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
+        <table style="width:inherit; border:medium"  cellpadding="10" border="1">
+            <tr>
+                <td align="center">ID</td>
+                <td align="center">Name</td>
+                <td align="center">Type</td>
+                <td align="center">Cost</td>
+                <td align="center">Information</td>
+            </tr>
+            @foreach (var element in ViewBag.Data)
+            {
+                <tr>
+                    <td align="center">@element.Id</td>
+                    <td align="center">@element.Name</td>
+                    <td align="center">@element.Type</td>
+                    <td align="center">@element.Cost</td>
+                    <td align="center">@element.Information</td>
+                </tr>
+            }
+        </table>
 
-<style>
-</style>
-
+    </div>
+</body>

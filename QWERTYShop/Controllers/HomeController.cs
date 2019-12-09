@@ -60,6 +60,7 @@ namespace QWERTYShop.Controllers
                         }
 
                     ViewBag.Categories = Caterogies;
+
                 }
             }
             return View();
@@ -203,7 +204,7 @@ namespace QWERTYShop.Controllers
         public ActionResult ChangeCity(CityModels model)
         {
             Session["CityName"] = model.City;
-            ViewBag.ChangeCitySuccess = "Успешно!";
+            ViewBag.ChangeCitySuccess = "Город изменён";
             var Data = new List<string>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
@@ -802,7 +803,7 @@ namespace QWERTYShop.Controllers
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 var cmd = new NpgsqlCommand($"SELECT id, name, word_similarity(name, '{request}') as wsm " +
-                                          $"FROM cards WHERE(word_similarity(name, '{request}')::numeric > 0.1) " +
+                                          $"FROM cards WHERE(word_similarity(name, '{request}')::numeric > 0.2) " +
                                           $"ORDER BY wsm DESC, name, wsm; ", connection);
                 connection.Open();
                 var reader = cmd.ExecuteReader();
