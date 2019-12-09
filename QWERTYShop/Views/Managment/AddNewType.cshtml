@@ -2,20 +2,92 @@
 @{
     ViewBag.Title = "AddNewType";
 }
-<h2>Добавление новой категории товара</h2>
-@ViewBag.Message
-<form method="post">
-    <p>Введите название товара (оно будет видно покупателям)</p>
-    <input type="text" name="Type" required /><br /><br />
-    <p>Введите служебное название товара (только английские буквы)</p>
-    <input type="text" name="SpecialName" required /><br /><br />
-    <input type="submit" value="Добавить" /><br />
-</form><br />
-<input class="buttons" value="Вернуться к управлению" type="button" onClick='location.href="http://localhost:52905/Managment/"' />
-<br />
-<br />
-<p style="color: cornflowerblue">На данный момент имеются следующие категории:</p>
-@foreach (var element in ViewBag.Types)
-{
-    <b>@element</b><br />
-}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown img.flag").addClass("flagvisibility");
+
+            $(".dropdown dt a").click(function () {
+                $(".dropdown dd ul").toggle();
+            });
+
+            $(".dropdown dd ul li a").click(function () {
+                var text = $(this).html();
+                $(".dropdown dt a span").html(text);
+                $(".dropdown dd ul").hide();
+                $("#result").html("Selected value is: " + getSelectedValue("sample"));
+            });
+
+            function getSelectedValue(id) {
+                return $("#" + id).find("dt a span.value").html();
+            }
+
+            $(document).bind('click', function (e) {
+                var $clicked = $(e.target);
+                if (!$clicked.parents().hasClass("dropdown"))
+                    $(".dropdown dd ul").hide();
+            });
+
+
+            $("#flagSwitcher").click(function () {
+                $(".dropdown img.flag").toggleClass("flagvisibility");
+            });
+        });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+            });
+        });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <h2>Добавление новой категории товара</h2>
+        @ViewBag.Message
+    <form method="post">
+        <p>Введите название товара (оно будет видно покупателям)</p>
+        <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="Type" required /><br /><br />
+        <p>Введите служебное название товара (только английские буквы)</p>
+        <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="SpecialName" required /><br /><br />
+        <div class="form-group">
+            <div class="buttons">
+                <button class="grey">Добавить</button>
+            </div>
+        </div>
+        <br />
+    </form>
+        <br />
+        <a href="~/Managment/">Вернуться к управлению</a>
+        <br />
+        <br />
+        <hr />
+        <h2>На данный момент имеются следующие категории:</h2>
+        @foreach (var element in ViewBag.Types)
+        {
+            <h3 style="font-weight:600">@element</h3>
+        }
+    </div>
+</body>

@@ -740,6 +740,7 @@ namespace QWERTYShop.Controllers
             return properties;
         }
 
+
         private void GetCategories()
         {
             List<string> categories = new List<string>();

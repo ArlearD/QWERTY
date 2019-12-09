@@ -204,6 +204,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ManagmentController.cs" />
+    <Compile Include="Controllers\_LayoutController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -231,12 +232,28 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Styles.css" />
+    <Content Include="Content\Styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\etalage.css" />
+    <Content Include="css\form.css" />
+    <Content Include="css\megamenu.css" />
+    <Content Include="css\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\cart.png" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\loupe.svg" />
+    <Content Include="Images\shopping-cart.svg" />
+    <Content Include="js\easing.js" />
+    <Content Include="js\jquery.etalage.min.js" />
+    <Content Include="js\jquery.flexisel.js" />
+    <Content Include="js\jquery.jscrollpane.min.js" />
+    <Content Include="js\jquery.min.js" />
+    <Content Include="js\jquery.wmuSlider.js" />
+    <Content Include="js\megamenu.js" />
+    <Content Include="js\move-top.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="packages.config" />
@@ -270,7 +287,6 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Managment\Index.cshtml" />
     <Content Include="Views\Managment\Confirmation.cshtml" />
     <Content Include="Views\Managment\Presentation.cshtml" />
@@ -279,7 +295,6 @@
     <Content Include="Views\Managment\AddNewCard.cshtml" />
     <Content Include="Views\Managment\AddNewCity.cshtml" />
     <Content Include="Views\Home\Card.cshtml" />
-    <Content Include="Views\Shared\_CartPartial.cshtml" />
     <Content Include="Views\Home\Cart.cshtml" />
     <Content Include="Views\Home\AddToCard.cshtml" />
     <Content Include="Views\Home\PurchaseInfo.cshtml" />
@@ -295,11 +310,11 @@
     <Content Include="Views\Managment\AddInformation.cshtml" />
     <Content Include="Views\Managment\Filtering.cshtml" />
     <Content Include="Views\Managment\PickupLocation.cshtml" />
-    <Content Include="Views\Shared\_SearchPartial.cshtml" />
     <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\_Layout\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
