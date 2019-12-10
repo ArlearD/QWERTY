@@ -7,6 +7,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Npgsql;
+using QWERTYShop.Models;
 
 namespace QWERTYShop
 {
@@ -22,6 +24,25 @@ namespace QWERTYShop
 
         void Session_Start()
         {
+            Session["Categories"] = new List<CategoryModels>();
+            var categories = new List<CategoryModels>();
+            using (var connection = new NpgsqlConnection("Server = localhost; Port = 5432; Database = postgres; User Id = postgres; Password = 1234QWER+"))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand("select distinct type from cards;", connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            categories.Add(new CategoryModels { Type = reader.GetString(0) });
+                        }
+
+                    Session["Categories"] = categories;
+                }
+            }
+
+
             string userIp = Request.UserHostAddress;
             string request = @"http://api.ipstack.com/" + userIp + @"?access_key=00981594f20ffe322488ebd4b9ad9678&fields=city";
             string result = "";
