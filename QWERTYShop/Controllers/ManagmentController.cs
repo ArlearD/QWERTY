@@ -508,6 +508,7 @@ namespace QWERTYShop.Controllers
         {
             ViewBag.Message = "Успешно!";
             AddNewType(model.Type, model.SpecialName);
+            ((List<CategoryModels>)Session["Categories"]).Add(new CategoryModels { Type = model.Type });
             GetTypes();
             return View();
         }

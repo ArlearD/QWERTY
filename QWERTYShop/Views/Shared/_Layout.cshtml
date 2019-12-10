@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+@using QWERTYShop.Models
 <html>
 <head>
     <title>@ViewBag.Title – QWERTYShop</title>
@@ -116,7 +117,7 @@
                 <li><a class="color10" href="~/">Home</a></li>
                 @try
                 {
-                    foreach (var element in ViewBag.Categories)
+                    foreach (var element in ((List<CategoryModels>)Session["Categories"]))
                     {
                         <li><a class="color" href="~/category/@element.Type">@element.Type</a></li>
                     }
