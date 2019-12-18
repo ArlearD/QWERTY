@@ -4,26 +4,116 @@
 }
 @model QWERTYShop.Models.AddNewCityModels
 
-<form method="post" align="center">
-    <br />
-    <br />
-    <p>@ViewBag.AddNewCitySuccess</p>
-    @Html.LabelFor(model => model.City)
-    @Html.ValidationMessageFor(model => model.City)
-    <br />
-    <input type="text" name="City" required />
-    <br />
-    @Html.LabelFor(model=>model.IsAvailableForPickup)
-    <br />
-    @Html.CheckBoxFor(model => model.IsAvailableForPickup)
-    <br />
-    @Html.LabelFor(model => model.CostForDelivery)
-    @Html.ValidationMessageFor(model => model.CostForDelivery)
-    <br />
-    <input type="text" name="CostForDelivery" required />
-    <br />
-    <br />
-    <input type="submit" value="Добавить" />
-</form>
-<p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
 
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown img.flag").addClass("flagvisibility");
+
+            $(".dropdown dt a").click(function () {
+                $(".dropdown dd ul").toggle();
+            });
+
+            $(".dropdown dd ul li a").click(function () {
+                var text = $(this).html();
+                $(".dropdown dt a span").html(text);
+                $(".dropdown dd ul").hide();
+                $("#result").html("Selected value is: " + getSelectedValue("sample"));
+            });
+
+            function getSelectedValue(id) {
+                return $("#" + id).find("dt a span.value").html();
+            }
+
+            $(document).bind('click', function (e) {
+                var $clicked = $(e.target);
+                if (!$clicked.parents().hasClass("dropdown"))
+                    $(".dropdown dd ul").hide();
+            });
+
+
+            $("#flagSwitcher").click(function () {
+                $(".dropdown img.flag").toggleClass("flagvisibility");
+            });
+        });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+            });
+        });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <form method="post">
+            <br />
+            <br />
+            <p style="color:green">@ViewBag.AddNewCitySuccess</p>
+            @Html.LabelFor(model => model.City)
+            @Html.ValidationMessageFor(model => model.City)
+            <br />
+            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="City" required />
+            <br />
+            @Html.LabelFor(model => model.IsAvailableForPickup)
+            <br />
+            @Html.CheckBoxFor(model => model.IsAvailableForPickup)
+            <br />
+            @Html.LabelFor(model => model.CostForDelivery)
+            @Html.ValidationMessageFor(model => model.CostForDelivery)
+            <br />
+            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="CostForDelivery" required />
+            <br />
+            <br />
+            <div class="form-group">
+                <div class="buttons">
+                    <button class="grey">Добавить</button>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
+        </form>
+        @if (ViewBag.CityList.Count > 0)
+        {
+            <hr />
+            <p style="font-weight: bold">Действия с городами:</p>
+            foreach (var element in ViewBag.CityList)
+            {
+                <br />
+                <div class="form-group">
+                    <div class="buttons">
+                        <a href="~/removecity/@element"><button style="background-color:darkred" class="grey">Удалить город @element</button></a>
+                    </div>
+                </div>
+                <br />
+            }
+        }
+        else
+        {
+            <p>На данный момент база данных городов пуста!</p>
+        }
+    </div>
+</body>

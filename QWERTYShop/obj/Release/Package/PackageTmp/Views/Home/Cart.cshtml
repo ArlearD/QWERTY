@@ -2,39 +2,134 @@
 @{
     ViewBag.Title = "Cart";
 }
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+        <script type="text/javascript" src="~/js/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
 
-<h2 align="center">Моя корзина</h2>
-<h3>@ViewBag.CartMessage</h3>
-@if (Session["cart"] != null)
-{
-    <h6 align="right">
-    <form method="post">
-    <input type="submit" value="Очистить корзину" />
-    <input type="text" hidden=hidden value="/" name="Method" />
-    </form>
-    </h6>
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
+
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
+
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
+
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
+
+
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+        </script>
+        <!-- start menu -->
+        <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+        <script type="text/javascript" src="~/js/megamenu.js"></script>
+        <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+        <!-- end menu -->
+        <!-- top scrolling -->
+        <script type="text/javascript" src="~/js/move-top.js"></script>
+        <script type="text/javascript" src="~/js/easing.js"></script>
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+        </script>
+
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+
+    </head>
+    <body>
+        <div class="wrap">
+            <h2>Моя корзина</h2>
+            <h3>@ViewBag.CartMessage</h3>
+            @if (Session["cart"] != null)
+            {
+                <form method="post">
+                    <div class="form-group">
+                        <div class="buttons">
+                            <button class="grey">Очистить корзину</button>
+                        </div>
+                    </div>
+                    <input type="text" hidden="hidden" value="/" name="Method" />
+                </form>
+                <br />
+                <hr />
+            }
+
+            @foreach (var element in ViewBag.CartContainer)
+            {<h4>@Html.ActionLink($"{@element.Name}", "Card", "Home", new { id = element.Id }, null) </h4>
+            <h4>Цена: @element.Cost </h4>
+            <h4>Количество: @element.Count </h4>
+            <form method="post">
+                <input style="border:none" class="changer" type="submit" value="+" name="Method" />
+                <input style="width:5px" class="hid" value="@element.Id" />
+                <input style="border:none" class="changer" type="submit" value="-" name="Method" />
+                <input class="hid" type="number" value="@element.Id" name="Id" />
+            </form>
+            <hr />
+
+        }
+            @if (ViewBag.CartPrice != "")
+            {
+                <h3>Текущая сумма: @ViewBag.CartPrice</h3>
+            }
+            @if (Session["cart"] != null)
+            {
+        <a style="color:orange" class="grey" href="~/home/purchaseinfo"><h1>Оформить покупку</h1></a>
+            }
+        </div>
+    </body>
+
+
+<style>
+    .hid{
+        visibility: hidden;
+    }
+input.changer {
+    width: 40px;
+    height: 30px;
+    text-decoration: none;
+    color: #fff;
+    text-align: center;
+    font: normal 17px arial;
 }
 
-@foreach (var element in ViewBag.CartContainer)
-{
-    <p>@element </p>
-    <p>@Html.ActionLink($"{@element.Name}", "Card", "Home", new { id = element.Id }, null)</p>
-    <form method="post">
-        <input type="submit" value="+" name="Method" />
-        <input type="number" hidden=hidden value="@element.Id" name="Id" />
-    </form>
-    <form method="post">
-        <input type="submit" value="-" name="Method" />
-        <input type="number" hidden=hidden value="@element.Id" name="Id" />
-    </form>
+    input.changer:not(.active) {
+        box-shadow: inset 0 1px 1px rgba(111, 55, 125, 0.8), inset 0 -1px 0px rgba(63, 59, 113, 0.2), 0 9px 16px 0 rgba(0, 0, 0, 0.3), 0 4px 3px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px #150a1e;
+        background-image: linear-gradient(#222222,#151515);
+        text-shadow: 0 0 21px rgba(223, 206, 228, 0.5), 0 -1px 0 #311d47;
+    }
 
-}
-@if (ViewBag.CartPrice != "")
-{
-    <h3>Текущая сумма:@ViewBag.CartPrice</h3>
-}
-@if (Session["cart"] != null)
-{
-    <input type="button" value="Оформить покупку!" style="color:red" onClick='location.href="http://localhost:52905/home/purchaseinfo"'/>
-}
+        input.changer:not(.active):hover,
+        input.changer:not(.active):focus {
+            transition: color 200ms linear, text-shadow 500ms linear;
+            color: rgba(255, 0, 0, 0.56);
+            text-shadow: 0 0 21px rgba(223, 206, 228, 0.5), 0 0 10px rgba(223, 206, 228, 0.4), 0 0 2px #2a153c;
+        }
 
+    input.changer:not(:hover) {
+        transition: 0.6s;
+    }
+</style>

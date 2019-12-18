@@ -49,6 +49,18 @@
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="MiniProfiler, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\MiniProfiler.4.1.0\lib\net461\MiniProfiler.dll</HintPath>
+    </Reference>
+    <Reference Include="MiniProfiler.Mvc5, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\MiniProfiler.Mvc5.4.1.0\lib\net461\MiniProfiler.Mvc5.dll</HintPath>
+    </Reference>
+    <Reference Include="MiniProfiler.Shared, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b44f9351044011a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\MiniProfiler.Shared.4.1.0\lib\net461\MiniProfiler.Shared.dll</HintPath>
+    </Reference>
     <Reference Include="Npgsql, Version=4.1.1.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.4.1.1\lib\net461\Npgsql.dll</HintPath>
     </Reference>
@@ -57,6 +69,9 @@
       <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.2.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.4.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
@@ -65,6 +80,7 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.6.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -77,6 +93,7 @@
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -204,17 +221,20 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ManagmentController.cs" />
+    <Compile Include="Controllers\_LayoutController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Accordances.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AddNewCityModels.cs" />
+    <Compile Include="Models\AddPropertiesToTypeModels.cs" />
     <Compile Include="Models\CardsModels.cs" />
     <Compile Include="Models\CartModels.cs" />
     <Compile Include="Models\CategoryModels.cs" />
     <Compile Include="Models\CityModels.cs" />
-    <Compile Include="Models\CommentariesModels.cs" />
     <Compile Include="Models\CurrentOrdersCheckModels.cs" />
+    <Compile Include="Models\FilteringModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ManagmentSortModels.cs" />
@@ -222,23 +242,161 @@
     <Compile Include="Models\PurchasedProductsModels.cs" />
     <Compile Include="Models\PurchaseManagmentModels.cs" />
     <Compile Include="Models\PurchaseModels.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\QWERTYShop.dll" />
+    <Content Include="bin\QWERTYShop.pdb" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css\etalage.css" />
+    <Content Include="Content\css\form.css" />
+    <Content Include="Content\css\megamenu.css" />
+    <Content Include="Content\css\style.css" />
+    <Content Include="Content\images\arrow.png" />
+    <Content Include="Content\images\arrow2.gif" />
+    <Content Include="Content\images\arrows.png" />
+    <Content Include="Content\images\as.png" />
+    <Content Include="Content\images\b-arrow.png" />
+    <Content Include="Content\images\banner1.jpg" />
+    <Content Include="Content\images\banner2.jpg" />
+    <Content Include="Content\images\border.png" />
+    <Content Include="Content\images\b_star.png" />
+    <Content Include="Content\images\down_arrow.png" />
+    <Content Include="Content\images\f_icon.png" />
+    <Content Include="Content\images\f_icon1.png" />
+    <Content Include="Content\images\f_icon2.png" />
+    <Content Include="Content\images\img-sprite.png" />
+    <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\nav_img.jpg" />
+    <Content Include="Content\images\nav_img1.jpg" />
+    <Content Include="Content\images\nav_img2.jpg" />
+    <Content Include="Content\images\nz.png" />
+    <Content Include="Content\images\pic.jpg" />
+    <Content Include="Content\images\pic1.jpg" />
+    <Content Include="Content\images\pic10.jpg" />
+    <Content Include="Content\images\pic11.jpg" />
+    <Content Include="Content\images\pic2.jpg" />
+    <Content Include="Content\images\pic3.jpg" />
+    <Content Include="Content\images\pic4.jpg" />
+    <Content Include="Content\images\pic5.jpg" />
+    <Content Include="Content\images\pic6.jpg" />
+    <Content Include="Content\images\pic7.jpg" />
+    <Content Include="Content\images\pic8.jpg" />
+    <Content Include="Content\images\pic9.jpg" />
+    <Content Include="Content\images\pk.png" />
+    <Content Include="Content\images\plus.png" />
+    <Content Include="Content\images\radius.png" />
+    <Content Include="Content\images\srl.png" />
+    <Content Include="Content\images\star.png" />
+    <Content Include="Content\images\s_arrow.png" />
+    <Content Include="Content\images\t1.jpg" />
+    <Content Include="Content\images\t2.jpg" />
+    <Content Include="Content\images\t3.jpg" />
+    <Content Include="Content\images\t4.jpg" />
+    <Content Include="Content\images\t5.jpg" />
+    <Content Include="Content\images\t6.jpg" />
+    <Content Include="Content\images\uk.png" />
+    <Content Include="Content\images\us.png" />
+    <Content Include="Content\images\wish.png" />
+    <Content Include="Content\images\zoom.png" />
+    <Content Include="Content\js\easing.js" />
+    <Content Include="Content\js\jquery.etalage.min.js" />
+    <Content Include="Content\js\jquery.flexisel.js" />
+    <Content Include="Content\js\jquery.jscrollpane.min.js" />
+    <Content Include="Content\js\jquery.min.js" />
+    <Content Include="Content\js\jquery.wmuSlider.js" />
+    <Content Include="Content\js\megamenu.js" />
+    <Content Include="Content\js\move-top.js" />
+    <Content Include="Content\Styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\etalage.css" />
+    <Content Include="css\form.css" />
+    <Content Include="css\megamenu.css" />
+    <Content Include="css\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\cart.png" />
+    <Content Include="Images\arrow.png" />
+    <Content Include="Images\arrow2.gif" />
+    <Content Include="Images\arrows.png" />
+    <Content Include="Images\as.png" />
+    <Content Include="Images\b-arrow.png" />
+    <Content Include="Images\border.png" />
+    <Content Include="Images\b_star.png" />
+    <Content Include="Images\down_arrow.png" />
+    <Content Include="Images\f_icon.png" />
+    <Content Include="Images\f_icon1.png" />
+    <Content Include="Images\f_icon2.png" />
+    <Content Include="Images\img-sprite.png" />
+    <Content Include="Images\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\logo1.png" />
+    <Content Include="Images\loupe.svg" />
+    <Content Include="Images\nz.png" />
+    <Content Include="Images\pk.png" />
+    <Content Include="Images\plus.png" />
+    <Content Include="Images\radius.png" />
+    <Content Include="Images\shopping-cart.svg" />
+    <Content Include="Images\srl.png" />
+    <Content Include="Images\star.png" />
+    <Content Include="Images\s_arrow.png" />
+    <Content Include="Images\uk.png" />
+    <Content Include="Images\us.png" />
+    <Content Include="Images\wish.png" />
+    <Content Include="Images\zoom.png" />
+    <Content Include="js\easing.js" />
+    <Content Include="js\jquery.etalage.min.js" />
+    <Content Include="js\jquery.flexisel.js" />
+    <Content Include="js\jquery.jscrollpane.min.js" />
+    <Content Include="js\jquery.min.js" />
+    <Content Include="js\jquery.wmuSlider.js" />
+    <Content Include="js\megamenu.js" />
+    <Content Include="js\move-top.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Images\arrows.psd" />
+    <Content Include="Images\fb.psd" />
+    <Content Include="Images\g+.psd" />
+    <Content Include="Images\img-sprite.psd" />
+    <Content Include="Images\logo.psd" />
+    <Content Include="Images\radius.psd" />
+    <Content Include="Images\social.psd" />
+    <Content Include="Images\star.psd" />
+    <Content Include="Images\s_arrow.psd" />
+    <Content Include="Images\Thumbs.db" />
+    <Content Include="Images\tw.psd" />
+    <Content Include="Content\images\arrows.psd" />
+    <Content Include="Content\images\fb.psd" />
+    <Content Include="Content\images\g+.psd" />
+    <Content Include="Content\images\img-sprite.psd" />
+    <Content Include="Content\images\logo.psd" />
+    <Content Include="Content\images\radius.psd" />
+    <Content Include="Content\images\social.psd" />
+    <Content Include="Content\images\star.psd" />
+    <Content Include="Content\images\s_arrow.psd" />
+    <Content Include="Content\images\Thumbs.db" />
+    <Content Include="Content\images\tw.psd" />
+    <Content Include="Content\bootstrap-theme.min.css~Stashed changes" />
+    <Content Include="Content\bootstrap-theme.min.css~Updated upstream" />
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\QWERTYShop123 - Web Deploy.pubxml" />
+    <Content Include="Scripts\bootstrap.js~Stashed changes" />
+    <Content Include="Scripts\bootstrap.js~Updated upstream" />
+    <None Include="Properties\PublishProfiles\QWERTYShop2 - Web Deploy.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -268,7 +426,6 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Managment\Index.cshtml" />
     <Content Include="Views\Managment\Confirmation.cshtml" />
     <Content Include="Views\Managment\Presentation.cshtml" />
@@ -277,7 +434,6 @@
     <Content Include="Views\Managment\AddNewCard.cshtml" />
     <Content Include="Views\Managment\AddNewCity.cshtml" />
     <Content Include="Views\Home\Card.cshtml" />
-    <Content Include="Views\Shared\_CartPartial.cshtml" />
     <Content Include="Views\Home\Cart.cshtml" />
     <Content Include="Views\Home\AddToCard.cshtml" />
     <Content Include="Views\Home\PurchaseInfo.cshtml" />
@@ -288,10 +444,16 @@
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\CurrentOrders.cshtml" />
     <Content Include="Views\Category\Category.cshtml" />
-    <Content Include="Views\Home\Commentaries.cshtml" />
+    <Content Include="Views\Managment\AddNewType.cshtml" />
+    <Content Include="Views\Managment\AddPropertiesToType.cshtml" />
+    <Content Include="Views\Managment\AddInformation.cshtml" />
+    <Content Include="Views\Managment\Filtering.cshtml" />
+    <Content Include="Views\Managment\PickupLocation.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\_Layout\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

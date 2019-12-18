@@ -1,44 +1,175 @@
 ﻿<!DOCTYPE html>
+@using QWERTYShop.Models
+@using StackExchange.Profiling
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title – QWERTYShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".dropdown img.flag").addClass("flagvisibility");
+
+            $(".dropdown dt a").click(function () {
+                $(".dropdown dd ul").toggle();
+            });
+
+            $(".dropdown dd ul li a").click(function () {
+                var text = $(this).html();
+                $(".dropdown dt a span").html(text);
+                $(".dropdown dd ul").hide();
+                $("#result").html("Selected value is: " + getSelectedValue("sample"));
+            });
+
+            function getSelectedValue(id) {
+                return $("#" + id).find("dt a span.value").html();
+            }
+
+            $(document).bind('click', function (e) {
+                var $clicked = $(e.target);
+                if (!$clicked.parents().hasClass("dropdown"))
+                    $(".dropdown dd ul").hide();
+            });
+
+
+            $("#flagSwitcher").click(function () {
+                $(".dropdown img.flag").toggleClass("flagvisibility");
+            });
+        });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+            });
+        });
+    </script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                @Html.ActionLink("QWERTYShop", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+<body style="padding-top:5px; padding-bottom:0px">
+    <div class="header-top" style="padding-top:0px; padding-bottom:0px;">
+        <div class="wrap">
+            <div style="margin-right:0px" class="logo">
+                <a href="~/"><img src="~/Images/logo1.png" /></a>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @if (HttpContext.Current.User.IsInRole("admin"))
+            <div class="cssmenu">
+                <ul style="height:auto">
+                    @*<li class="search" style="width:auto; height:auto">
+                            <input type="text" name="s" class="textbox" value="Search" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}">
+                            <input type="submit" value="Subscribe" id="submit" name="submit">
+                            <div id="response"> </div>
+                        </li>*@
+                    <li>
+                        <form style="padding:0px;height: 0px;" action="/Home/Search" method="post">
+                            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="search" value="Поиск" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Поиск';}">
+                            <button style="background-color:white; border:0px" type="submit"><img style="height:20px; width:20px" src="~/Images/loupe.svg"></button>
+                        </form>
+                    </li>
+                    <li>@Html.ActionLink("Ваш город: " + Session["CityName"], "ChangeCity", "Home") </li>
+                    @*<li class="active"><a href="register.html">Sign up & Save</a></li>*@
+                    @if (Request.IsAuthenticated)
                     {
-                        <li>@Html.ActionLink("Управление", "Index", "Managment")</li>
+                        <li>
+                            <form action="/Account/LogOff" id="logoutForm" method="post">
+                                @Html.AntiForgeryToken()
+                        <li>@Html.ActionLink(User.Identity.Name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>
+                        </form>
+                        </li>
                     }
-                    <li style="color:darkgray"><a>Ваш город: @Session["CityName"]</a></li>
-                    <li>@Html.ActionLink("Изменить", "ChangeCity", "Home")</li>
-                    <li>@Html.Partial("_CartPartial")</li>
+                    else
+                    {
+                        <li>@Html.ActionLink("Регистрация", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                        <li>@Html.ActionLink("Войти", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                    }
+                    <li><a href="/Home/Cart"><img style="height:30px; width:30px" src="~/Images/shopping-cart.svg"></a></li>
                 </ul>
-                @Html.Partial("_LoginPartial")
             </div>
+            @if (HttpContext.Current.User.IsInRole("admin"))
+            {
+                <ul class="icon2 sub-icon2 profile_img">
+                    <li>
+                        <a class="active-icon c2" href="~/Managment"></a>
+                    </li>
+                </ul>
+            }
+            <div class="clear"></div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 QWERTYShop</p>
-        </footer>
+    <div class="header-bottom">
+        <div class="wrap">
+            <!-- start header menu -->
+            <ul class="megamenu skyblue">
+                <li><a class="color10" href="~/">Главная страница</a></li>
+                @try
+                {
+                    foreach (var element in ((List<CategoryModels>)Session["Categories"]))
+                    {
+                        <li><a class="color" href="~/category/@element.Type">@element.Type</a></li>
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            </ul>
+            <div class="clear"></div>
+        </div>
     </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
 
+            var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+            };
+
+
+            $().UItoTop({ easingType: 'easeOutQuart' });
+
+        });
+    </script>
+    <a href="#" id="toTop" style="display: block;"><span id="toTopHover" style="opacity: 1;"></span></a>
+    @RenderBody()
+    @*<div class="footer">
+            <div class="footer-top">
+                <div class="wrap">
+                    <div class="col_1_of_footer-top span_1_of_footer-top">
+                        <ul class="f_list">
+                            <li><img src="images/f_icon.png" alt="" /><span class="delivery">Бесплатная доставка при заказе от 50000₽</span></li>
+                        </ul>
+                    </div>
+                    <div class="col_1_of_footer-top span_1_of_footer-top">
+                        <ul class="f_list">
+                            <li><img src="images/f_icon1.png" alt="" /><span class="delivery">Телефон поддержки :<span class="orange"> +79600586089</span></span></li>
+                        </ul>
+                    </div>
+                    <div class="col_1_of_footer-top span_1_of_footer-top">
+                        <ul class="f_list">
+                            <li><img src="images/f_icon2.png" alt="" /><span class="delivery">Быстрая доставка & Лучшие цены</span></li>
+                        </ul>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>*@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    @MiniProfiler.Current.RenderIncludes()
 </body>
 </html>

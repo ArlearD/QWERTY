@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using StackExchange.Profiling.Mvc;
 
 namespace QWERTYShop
 {
@@ -8,6 +9,7 @@ namespace QWERTYShop
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new ProfilingActionFilter());
         }
     }
 }

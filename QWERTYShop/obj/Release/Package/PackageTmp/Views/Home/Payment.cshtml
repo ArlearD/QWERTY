@@ -2,27 +2,118 @@
 @{
     ViewBag.Title = "Payment";
 }
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
 
-<h2>Оплата</h2>
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
 
-<form method="post">
-    @Html.LabelFor(model => model.CardNumber)
-    @Html.ValidationMessageFor(model => model.CardNumber)<br />
-    <input type="text" name="CardNumber" required /> <br /><br />
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
 
-    @Html.LabelFor(model => model.CVC)
-    @Html.ValidationMessageFor(model => model.CVC)<br />
-    <input type="password" name="CVC" required /> <br /><br />
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
 
-    @Html.LabelFor(model => model.DataValidation)
-    @Html.ValidationMessageFor(model => model.DataValidation)<br />
-    <input type="text" name="DataValidation" required /> <br /><br />
-
-    @Html.LabelFor(model => model.Person)
-    @Html.ValidationMessageFor(model => model.Person)<br />
-    <input type="text" name="Person" required /> <br /><br />
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
 
 
-    <input type="submit" value="продолжить" />
-</form>
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+    </script>
 
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <h2>Оплата</h2>
+        <h3>Стоимость: @Session["Price"]</h3>
+        <form method="post">
+            @Html.LabelFor(model => model.CardNumber)
+            @Html.ValidationMessageFor(model => model.CardNumber)<br />
+            <input style="border:none;border-top:groove;border-left:groove;" type="text" name="CardNumber" required /> <br /><br />
+            @Html.LabelFor(model => model.CVC)
+            @Html.ValidationMessageFor(model => model.CVC)<br />
+            <input style="width:30px;border:none;border-top:groove;border-left:groove;" type="password" name="CVC" required /> <br /><br />
+            @Html.LabelFor(x => x.MonthValidation) <br />
+            <select style="border:none;border-top:groove;border-left:groove;" name="MonthValidation">
+                <option>Январь</option>
+                <option>Февраль</option>
+                <option>Март</option>
+                <option>Апрель</option>
+                <option>Май</option>
+                <option>Июнь</option>
+                <option>Июль</option>
+                <option>Август</option>
+                <option>Сентябрь</option>
+                <option>Октябрь</option>
+                <option>Ноябрь</option>
+                <option>Декабрь</option>
+            </select><br />
+            <br />
+            @Html.LabelFor(x => x.YearValidation) <br />
+            <select style="border:none;border-top:groove;border-left:groove;" name="YearValidation">
+                <option>2019</option>
+                <option>2020</option>
+                <option>2021</option>
+                <option>2022</option>
+                <option>2023</option>
+                <option>2024</option>
+                <option>2025</option>
+                <option>2026</option>
+                <option>2027</option>
+                <option>2028</option>
+            </select> <br />
+            <br />
+            @Html.LabelFor(model => model.Person)
+            @Html.ValidationMessageFor(model => model.Person)<br />
+            <input style="border:none;border-top:groove;border-left:groove;" type="text" name="Person" required /> <br /><br />
+
+
+            <div class="form-group">
+                <div class="buttons">
+                    <button class="grey">Продолжить</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</body>

@@ -17,12 +17,12 @@ namespace QWERTYShop.Models
         [Required(ErrorMessage = "Заполните это поле!")]
         [Display(Name = "Дом")]
         [RegularExpression(@"[0-9А-Яа-яЁё/-]{1,8}", ErrorMessage = "Некорректный номер дома")]
-        public int House { get; set; }
+        public string House { get; set; }
 
         [Required(ErrorMessage = "Заполните это поле!")]
         [Display(Name = "Номер квартиры")]
         [RegularExpression("[0-9]{1,5}", ErrorMessage = "Некорректный номер квартиры")]
-        public int Flat { get; set; }
+        public int? Flat { get; set; }
 
         [Required(ErrorMessage = "Заполните это поле!")] 
         [Display(Name = "Номер телефона с восьмёркой")]
@@ -44,6 +44,9 @@ namespace QWERTYShop.Models
         public string PickupDate { get; set; }
 
         public string Payment { get; set; }
+
+        [Display(Name = "Выберите пункт выдачи")]
+        public string Addresses { get; set; }
 
     }
 }

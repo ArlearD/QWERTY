@@ -60,40 +60,104 @@ namespace QWERTYShop.Controllers
                         }
 
                     ViewBag.Categories = Caterogies;
+
                 }
             }
             return View();
         }
 
-        [Route("card/{id}")]
-        public ActionResult Card(long id) //ТУТ был "long?" вместо "long"
+        private void AddCommentary(List<string> commentary)
         {
-            var card = new CardsModels();
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command =
+                    new NpgsqlCommand(
+                        $"INSERT INTO commentaries values('{commentary[2]}', '{commentary[0]}', '{DateTime.Today}', {long.Parse(commentary[1])}, {int.Parse(commentary[3])} )", connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                connection.Open();
+                NpgsqlCommand cmd = new NpgsqlCommand($"update cards set averagemark={GetAverageMark(long.Parse(commentary[1]))} where id={long.Parse(commentary[1])};", connection);
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        private void GetCommentaries(long id)
+        {
+            List<string> data = new List<string>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (var command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
+                using (var command =
+                    new NpgsqlCommand($"SELECT * FROM commentaries where id={id};",
+                        connection))
                 {
                     var reader = command.ExecuteReader();
                     if (reader.HasRows)
                         while (reader.Read())
                         {
-                            card.Id = reader.GetInt64(0);
-                            card.Name = reader.GetString(1);
-                            card.Type = reader.GetString(2);
-                            card.Image = reader.GetString(4);
-                            card.Information = reader.GetString(5);
-                            card.Cost = reader.GetInt32(6);
+                            data.Add(reader.GetString(0) + " " + reader.GetString(1) + " " + reader.GetDateTime(2) + " " +
+                                      reader.GetInt32(4));
                         }
                 }
             }
+            ViewBag.Commentaries = data;
+        }
 
+        private string GetAverageMark(long id)
+        {
+            float avg = -1;
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command =
+                    new NpgsqlCommand($"Select avg(mark) from(SELECT mark FROM commentaries where id={id}) as a;",
+                        connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            if (!reader.IsDBNull(0))
+                                avg = reader.GetFloat(0);
+                        }
+                }
+            }
+            return avg.ToString().Replace(',', '.');
+        }
+
+        [Route("card/{id}")]
+        public ActionResult Card(long id)
+        {
+            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
+            var card = GetOutputForCard(id);
             var IdsToOutput = GetAdditionalIdProducts(id);
             if (IdsToOutput.Count != 0)
                 CreateCardToBuyWith(IdsToOutput);
             else ViewBag.PurchasedId = new List<CardsModels>();
 
             ViewBag.AverageMark = GetAverageMark(id);
+            return View(card);
+        }
+
+        [Route("card/{id}")]
+        [HttpPost]
+        public ActionResult Card(long id, List<string> comment)
+        {
+            if (ModelState.IsValid)
+            {
+                AddCommentary(comment);
+            }
+            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
+            var card = GetOutputForCard(id);
+            var idsToOutput = GetAdditionalIdProducts(id);
+            if (idsToOutput.Count != 0)
+                CreateCardToBuyWith(idsToOutput);
+            else ViewBag.PurchasedId = new List<CardsModels>();
+
+            ViewBag.AverageMark = GetAverageMark(id);
+
             return View(card);
         }
 
@@ -140,7 +204,7 @@ namespace QWERTYShop.Controllers
         public ActionResult ChangeCity(CityModels model)
         {
             Session["CityName"] = model.City;
-            ViewBag.ChangeCitySuccess = "Успешно!";
+            ViewBag.ChangeCitySuccess = "Город изменён";
             var Data = new List<string>();
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
@@ -241,7 +305,7 @@ namespace QWERTYShop.Controllers
             {
                 var parsedIdsAndCount = idsAndCount[i].Split(':');
                 if (long.Parse(parsedIdsAndCount[0]) == id)
-                    return RedirectToAction("Cart"); //выдавать сообщения, типо товар уже в корзине
+                    return RedirectToAction("Cart");
             }
 
             var currCart = Session["cart"].ToString();
@@ -431,8 +495,8 @@ namespace QWERTYShop.Controllers
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("qqqwertyshop@gmail.com", "1234QWER+");
-            client.Send("qqqwertyshop@gmail.com", Session["PurchaseMail"].ToString(), "Заказ успешно оформлен!", information);
+            client.Credentials = new NetworkCredential("qwertysshopp@gmail.com", "1234QWER+");
+            client.Send("qwertysshopp@gmail.com", Session["PurchaseMail"].ToString(), "QWERTYShop", information);
 
             return View();
         }
@@ -456,6 +520,8 @@ namespace QWERTYShop.Controllers
 
         public ActionResult PurchaseData()
         {
+            PurchaseModels model = new PurchaseModels { Addresses = "", City = "", House = "", Mail = "", PhoneNumber = "" };
+            GetPickupAddresses(Session["CityName"].ToString());
             var currentDate = DateTime.Today.Date;
             List<string> availableDatesOfPickup = new List<string>();
             for (int i = 1; i <= 7; i++)
@@ -478,12 +544,13 @@ namespace QWERTYShop.Controllers
 
             ViewBag.AvailableTimesOfDelivery = availableTimesOfDelivery;
             ViewBag.AvailableDatesOfDelivery = availableDatesOfDelivery;
-            return View();
+            return View(model);
         }
 
         [HttpPost]
         public ActionResult PurchaseData(PurchaseModels model)
         {
+            GetPickupAddresses(Session["CityName"].ToString());
             var currentDate = DateTime.Today.Date;
             List<string> availableDatesOfPickup = new List<string>();
             for (int i = 1; i <= 7; i++)
@@ -519,7 +586,7 @@ namespace QWERTYShop.Controllers
             if (model.Payment == "Оплата онлайн")
             {
                 ViewBag.Message = "Введите поля корректно!";
-                return View();
+                return View(model);
             }
 
             if (ModelState.IsValid)
@@ -528,7 +595,7 @@ namespace QWERTYShop.Controllers
             }
 
             ViewBag.Message = "Введите поля корректно!";
-            return View();
+            return View(model);
         }
 
         private void GetInformation(PurchaseModels model)
@@ -559,85 +626,6 @@ namespace QWERTYShop.Controllers
             return currMax + 1;
         }
 
-        [Route("card/{id}/commentaries")]
-        public ActionResult Commentaries()
-        {
-            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
-            return View();
-        }
-
-        [Route("card/{id}/commentaries")]
-        [HttpPost]
-        public ActionResult Commentaries(CommentariesModels model)
-        {
-            if (ModelState.IsValid)
-            {
-                model.Time = DateTime.Today;
-                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-                {
-                    connection.Open();
-                    NpgsqlCommand command =
-                        new NpgsqlCommand(
-                            $"INSERT INTO commentaries values('{model.UserName}', '{model.Comment}', '{model.Time}', {model.Id}, {model.Mark} )", connection);
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
-            GetCommentaries(long.Parse(Request.Url.ToString().Split('/')[4]));
-
-            return View();
-        }
-
-        private void GetCommentaries(long id)
-        {
-            List<CommentariesModels> data = new List<CommentariesModels>();
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (var command =
-                    new NpgsqlCommand($"SELECT * FROM commentaries where id={id};",
-                        connection))
-                {
-                    var reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            data.Add(new CommentariesModels
-                            {
-                                UserName = reader.GetString(0),
-                                Comment = reader.GetString(1),
-                                Time = reader.GetDateTime(2),
-                                Id = reader.GetInt64(3),
-                                Mark = reader.GetInt32(4)
-                            });
-                        }
-                }
-            }
-            ViewBag.Commentaries = data;
-        }
-
-        private float GetAverageMark(long id)
-        {
-            float avg = -1;
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (var command =
-                    new NpgsqlCommand($"Select avg(mark) from(SELECT mark FROM commentaries where id={id}) as a;",
-                        connection))
-                {
-                    var reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            if (!reader.IsDBNull(0))
-                                avg = reader.GetFloat(0);
-                        }
-                }
-            }
-            return avg;
-        }
-
         private List<long> GetAdditionalIdProducts(long id)
         {
             List<PurchasedProductsModels> data = new List<PurchasedProductsModels>();
@@ -652,8 +640,8 @@ namespace QWERTYShop.Controllers
                     if (reader.HasRows)
                         while (reader.Read())
                         {
-                            if(!reader.IsDBNull(1))
-                            data.Add(new PurchasedProductsModels { Id = reader.GetInt64(0), PurchasedProducts = reader.GetString(1) });
+                            if (!reader.IsDBNull(1))
+                                data.Add(new PurchasedProductsModels { Id = reader.GetInt64(0), PurchasedProducts = reader.GetString(1) });
                         }
                 }
             }
@@ -716,7 +704,168 @@ namespace QWERTYShop.Controllers
 
                 ViewBag.PurchasedId = data;
             }
+        }
 
+        private CardsModels GetOutputForCard(long id)
+        {
+            var card = new CardsModels();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand($"SELECT * FROM public.cards where id={id};", connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            card.Id = reader.GetInt64(0);
+                            card.Name = reader.GetString(1);
+                            card.Type = reader.GetString(2);
+                            card.Image = reader.GetString(4);
+                            card.Information = reader.GetString(5);
+                            card.Cost = reader.GetInt32(6);
+                        }
+                }
+            }
+
+            string specialName = new ManagmentController().GetSpecialNameUsingType(card.Type); //интересно что будет
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                string[] namesOfProperties = null;
+                var properties = new List<string>();
+                int numOfColumns = 0;
+
+                connection.OpenAsync();
+                NpgsqlCommand cmd = new NpgsqlCommand($"SELECT count(*) FROM information_schema.columns where table_name='{specialName}'", connection);
+                var reader = cmd.ExecuteReaderAsync();
+                while (reader.Result.Read())
+                {
+                    numOfColumns = reader.Result.GetInt32(0);
+                }
+                connection.Close();
+
+                connection.OpenAsync();
+                cmd = new NpgsqlCommand($"select * from {specialName} where id={id}", connection);
+                reader = cmd.ExecuteReaderAsync();
+                while (reader.Result.Read())
+                {
+                    for (int i = 1; i < numOfColumns; i++)
+                        properties.Add(reader.Result.GetString(i));
+
+                }
+                connection.Close();
+                connection.OpenAsync();
+                cmd = new NpgsqlCommand($"select properties from types where type='{card.Type}'", connection);
+                reader = cmd.ExecuteReaderAsync();
+                while (reader.Result.Read())
+                {
+                    namesOfProperties = (string[])reader.Result.GetValue(0);
+                }
+                connection.Close();
+                ViewBag.NamesOfProperties = namesOfProperties;
+                ViewBag.Properties = properties;
+            }
+            return card;
+        }
+
+        private void GetPickupAddresses(string city)
+        {
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                List<string> addresses = new List<string>();
+                connection.Open();
+                var cmd = new NpgsqlCommand($"select addresses from citylist where city='{city}'", connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    addresses = ((string[])reader.GetValue(0)).ToList();
+                }
+                connection.Close();
+                ViewBag.Addresses = addresses;
+            }
+        }
+
+        public ActionResult Search()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Search(string search)
+        {
+            Find(search);
+            return View();
+        }
+
+        private void Find(string request)
+        {
+            List<long> idsToOutput = new List<long>();
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                var cmd = new NpgsqlCommand($"SELECT id, name, word_similarity(name, '{request}') as wsm " +
+                                          $"FROM cards WHERE(word_similarity(name, '{request}')::numeric > 0.2) " +
+                                          $"ORDER BY wsm DESC, name, wsm; ", connection);
+                connection.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (reader.HasRows)
+                    {
+                        idsToOutput.Add(reader.GetInt64(0));
+                    }
+                }
+                connection.Close();
+            }
+
+            List<CardsModels> cards = new List<CardsModels>();
+
+            var card = new CardsModels();
+
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand(GetSelectStringForSearch(idsToOutput), connection))
+                {
+                    var reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                        while (reader.Read())
+                        {
+                            card.Id = reader.GetInt64(0);
+                            card.Name = reader.GetString(1);
+                            card.Type = reader.GetString(2);
+                            card.Image = reader.GetString(4);
+                            card.Information = reader.GetString(5);
+                            card.Cost = reader.GetInt32(6);
+                            cards.Add(card);
+                            card=new CardsModels();
+                        }
+                }
+                connection.Close();
+            }
+
+            ViewBag.Cards = cards;
+        }
+
+        private string GetSelectStringForSearch(List<long> idsToOutput)
+        {
+            var output = "SELECT * FROM public.cards where id=";
+
+            if (idsToOutput.Count == 0)
+                return output += "-1";
+
+            for (int i = 0; i < idsToOutput.Count; i++)
+            {
+                if (i == idsToOutput.Count - 1)
+                {
+                    output += idsToOutput[i].ToString();
+                }
+                else
+                {
+                    output += $"{idsToOutput[i]} or id=";
+                }
+            }
+
+            return output;
         }
     }
 }

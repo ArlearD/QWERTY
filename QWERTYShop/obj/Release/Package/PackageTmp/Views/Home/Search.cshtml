@@ -1,0 +1,74 @@
+﻿<h2>Поиск</h2>
+<head>
+    <link rel="stylesheet" href="~/Content/Styles.css">
+</head>
+<form method="post">
+    <p>
+        <input type="search" name="search"/>
+        <input type="submit" value="Найти"/>
+    </p>
+</form>
+
+@if (ViewBag.Cards == null)
+{
+    <p>Введите поисковый запрос</p>
+}
+else
+{
+    if (ViewBag.Cards.Count == 0)
+    {
+        <p>По Вашему поисковому запросу ничего не найдено</p>
+    }
+    else
+    {
+        <div class="conatiner">
+            <div class="wrap">
+                @foreach (var element in ViewBag.Cards)
+                {
+                    <div onClick='location.href="https://qwertyshop2.azurewebsites.net/Card/@element.Id"' class="product-item">
+                        @if (element.Image == null || element.Image == "")
+                        {
+                            var relativePath = "~/Images/" + element.Id + ".jpg";
+                            var absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                            if (File.Exists(absolutePath))
+                            {
+                                var imagePath = element.Id + ".jpg";
+                                <img src="~/Images/@imagePath"/>
+                            }
+                            else
+                            {
+                                relativePath = "~/Images/" + element.Id + ".png";
+                                absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                if (File.Exists(absolutePath))
+                                {
+                                    var imagePath = element.Id + ".png";
+                                    <img src="~/Images/@imagePath"/>
+                                }
+                                else
+                                {
+                                    relativePath = "~/Images/" + element.Id + ".jpeg";
+                                    absolutePath = HttpContext.Current.Server.MapPath(relativePath);
+                                    if (File.Exists(absolutePath))
+                                    {
+                                        var imagePath = element.Id + ".jpeg";
+                                        <img src="~/Images/@imagePath" alt="@element.Image" />
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <img src="@element.Image">
+                        }
+                        <div class="product-list">
+                            <h3>@element.Name</h3>
+                            <span class="price">₽ @element.Cost</span>
+                            <h4>@Html.ActionLink("Добавить в корзину", "AddToCart", "Home", new { id = element.Id }, null)</h4>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+

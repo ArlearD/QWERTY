@@ -2,9 +2,104 @@
 @{
     ViewBag.Title = "Success";
 }
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
 
-<h2>Успешно!</h2>
-<p>Ваш заказ успешно оформлен!</p>
-@Html.ActionLink("На главную страницу", "Index","Home")
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
+
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
+
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
+
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
 
 
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <h2>Успешно! Ваш номер заказа: @ViewBag.Id</h2>
+        <p>Информация по вашему заказу отправлена на Вашу почту! Также при смене статуса заказа вы получите письмо!</p>
+        @if (Session["Paid"] == "true")
+        {
+            <p>Спасибо за оплату онлайн!</p>
+            if (Session["Delivery"].ToString() == "Самовывоз")
+            {
+                <p>Просто приходите @Session["PickupDate"] в пункт самовывоза и забирайте Ваш заказ! Ждём Вас в нашем магазине снова :)</p>
+            }
+            if (Session["Delivery"].ToString() == "Доставка до квартиры")
+            {
+                <p>Ожидайте доставку @Session["DeliveryDate"] с @Session["DeliveryTime"].ToString().Split('-')[0] по @Session["DeliveryTime"].ToString().Split('-')[1]! Наш курьер позвонит вам в день доставки! Ждём Вас в нашем магазине снова :)</p>
+            }
+            Session["Paid"] = null;
+            Session["Cart"] = null;
+        }
+        else
+        {
+            if (Session["Delivery"].ToString() == "Самовывоз")
+            {
+                <p>Просто приходите @Session["PickupDate"] в пункт самовывоза, оплачивайте и забирайте Ваш заказ! Ждём Вас в нашем магазине снова :)</p>
+                <p>Напоминаем сумма Вашего заказа составляет @Session["Price"]</p>
+            }
+
+            if (Session["Delivery"].ToString() == "Доставка до квартиры")
+            {
+                <p>Ожидайте доставку @Session["DeliveryDate"] с @Session["DeliveryTime"].ToString().Split('-')[0] по @Session["DeliveryTime"].ToString().Split('-')[1]! Наш курьер позвонит вам в день доставки! Ждём Вас в нашем магазине снова :)</p>
+                <p>Напоминаем сумма Вашего заказа составляет @Session["Price"]</p>
+            }
+            Session["Cart"] = null;
+        }
+
+
+
+        @Html.ActionLink("На главную страницу", "Index", "Home")
+
+
+    </div>
+</body>

@@ -1,0 +1,136 @@
+﻿@model QWERTYShop.Models.FilteringModels
+@{
+    ViewBag.Title = "View";
+}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
+
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
+
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
+
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
+
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
+
+
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <h2>Меню управления фильтрами</h2>
+        @if (ViewBag.Message != null)
+        {
+            <p>@ViewBag.Message</p>
+        }
+        <form method="post">
+            <select style="border:none;border-top:groove;border-left:groove;" name="Category">
+                @foreach (var element in ViewBag.Categories)
+                {
+                    <option>@element</option>
+                }
+            </select>
+            <div class="form-group">
+                <div class="buttons">
+                    <button class="grey">Выбрать категорию</button>
+                </div>
+            </div>
+        </form>
+        <br />
+        <br />
+        @if (ViewBag.Category != "")
+        {
+            <p>Выбранная категория: @ViewBag.Category</p>
+        }
+        @if (ViewBag.Properties.Count > 0)
+        {
+            <h3 style="font-weight: bold">Доступные к добавлению свойства:</h3>
+        }
+        @foreach (var element in ViewBag.Properties)
+        {
+            <form method="post">
+                <p>
+                    <input name="Operation" value="Добавить фильтр" hidden />
+                    <input name="Property" value="@element" hidden />
+                    <input name="Category" value="@ViewBag.Category" hidden />
+                    <div class="form-group">
+                        <div class="buttons">
+                            <button style="background-color:darkred" class="grey">@element</button>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </p>
+            </form>
+        }
+        @if (ViewBag.Filters.Count > 0)
+        {
+            <h3 style="font-weight: bold">Фильтрация добавлена по следующим свойствам:</h3>
+        }
+        @foreach (var element in ViewBag.Filters)
+        {
+            <form method="post">
+                <p>
+                    <input name="Operation" value="Удалить" hidden />
+                    <input name="Property" value="@element" hidden />
+                    <input name="Category" value="@ViewBag.Category" hidden />
+                    <div class="form-group">
+                        <div class="buttons">
+                            <button style="background-color:green" class="grey">@element</button>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </p>
+            </form>
+        }
+        <hr />
+        <a href="~/Managment/">Вернуться к управлению</a>
+    </div>
+</body>

@@ -1,4 +1,4 @@
-create table public.cards
+create extension pg_trgm; create table public.cards
 (
     Id bigint,
     Name text,
@@ -7,10 +7,10 @@ create table public.cards
     Image text,
     Information text,
     Cost int
-);
+, averagemark float4);
 
 
-create table public.citylist(	City varchar, IsAvailableForPickup bool, CostForDelivery int);
+create table public.citylist(	City varchar, IsAvailableForPickup bool, CostForDelivery int, addresses varchar[]);
 
 create table finishedpurchases
 (
@@ -39,3 +39,5 @@ create table commentaries
     id bigint,
     mark int
 );
+
+create table types(type varchar, properties varchar[], specialname varchar, chooseFilter varchar[])

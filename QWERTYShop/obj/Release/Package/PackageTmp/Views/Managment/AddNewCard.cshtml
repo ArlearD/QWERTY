@@ -1,35 +1,118 @@
 ﻿<!DOCTYPE html>
 @model QWERTYShop.Models.CardsModels
 
-<h3>Добавление новой карточки товара</h3>
-<form method="post" align="center">
-    @Html.LabelFor(model => model.Name)
-    @Html.ValidationMessageFor(model => model.Name)
-    <br />
-    <input type="text" name="Name" required />
-    <br />
-    @Html.LabelFor(model => model.Cost)
-    @Html.ValidationMessageFor(model => model.Cost)
-    <br />
-    <input type="number" name="Cost" required />
-    <br />
-    @Html.LabelFor(model => model.Image)
-    @Html.ValidationMessageFor(model => model.Image)
-    <br />
-    <input type="text" name="Image" />
-    <br />
-    @Html.LabelFor(model => model.Information)
-    @Html.ValidationMessageFor(model => model.Name)
-    <br />
-    <input type="text" name="Information" required />
-    <br />
-    @Html.LabelFor(model => model.Type)
-    @Html.ValidationMessageFor(model => model.Type)
-    <br />
-    <input type="text" name="Type" required />
-    <br />
-    <br />
-    <input type="submit" value="Отправить" />
-</form>
-<p>@Html.ActionLink("Посмотреть представление базы данных", "Presentation", "Managment")</p>
-<p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".dropdown img.flag").addClass("flagvisibility");
+
+                $(".dropdown dt a").click(function () {
+                    $(".dropdown dd ul").toggle();
+                });
+
+                $(".dropdown dd ul li a").click(function () {
+                    var text = $(this).html();
+                    $(".dropdown dt a span").html(text);
+                    $(".dropdown dd ul").hide();
+                    $("#result").html("Selected value is: " + getSelectedValue("sample"));
+                });
+
+                function getSelectedValue(id) {
+                    return $("#" + id).find("dt a span.value").html();
+                }
+
+                $(document).bind('click', function (e) {
+                    var $clicked = $(e.target);
+                    if (!$clicked.parents().hasClass("dropdown"))
+                        $(".dropdown dd ul").hide();
+                });
+
+
+                $("#flagSwitcher").click(function () {
+                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                });
+            });
+    </script>
+    <!-- start menu -->
+    <link href="~/css/megamenu.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="~/js/megamenu.js"></script>
+    <script>$(document).ready(function () { $(".megamenu").megamenu(); });</script>
+    <!-- end menu -->
+    <!-- top scrolling -->
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".scroll").click(function (event) {
+                    event.preventDefault();
+                    $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1200);
+                });
+            });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+<body>
+    <div class="wrap">
+        <h1 align="center">Добавление новой карточки товара</h1>
+        @using (Html.BeginForm("AddNewCard", "Managment", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.LabelFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+            <br />
+            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="Name" required />
+            <br />
+            <br />
+            @Html.LabelFor(model => model.Cost)
+            @Html.ValidationMessageFor(model => model.Cost)
+            <br />
+            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="number" name="Cost" required />
+            <br />
+            <br />
+            @Html.LabelFor(model => model.Image)
+            @Html.ValidationMessageFor(model => model.Image)
+            <br />
+            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="Image" />
+            <br />
+            <br />
+            @Html.LabelFor(model => model.Upload)
+            <br />
+            <input hidden="hidden" type="file" name="Upload"/>
+            <br>
+            <br />
+            @Html.LabelFor(model => model.Information)
+            @Html.ValidationMessageFor(model => model.Name)
+            <br />
+            <input style="width:150px;border:none;border-top:groove;border-left:groove;" type="text" name="Information" />
+            <br />
+            <br />
+            @Html.LabelFor(model => model.Type)
+            @Html.ValidationMessageFor(model => model.Type)
+            <br />
+            <select style="border:none;border-top:groove;border-left:groove;" name="Type">
+                @foreach (var element in ViewBag.Types)
+                {
+                    <option>@element</option>
+                }
+            </select>
+            <br />
+            <br />
+                    <button class="grey">Продолжить</button>
+            <br />
+            <br />
+            <hr />
+        }
+        <p>@Html.ActionLink("Посмотреть представление базы данных", "Presentation", "Managment")</p>
+        <p align="left"> @Html.ActionLink("Вернуться к управлению", "Index", "Managment") </p>
+
+    </div>
+</body>
