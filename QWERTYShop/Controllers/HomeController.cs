@@ -393,16 +393,8 @@ namespace QWERTYShop.Controllers
                 totalPrice += cartElements[i].Cost * cartElements[i].Count;
             ViewBag.CartPrice = totalPrice.ToString();
             Session["Price"] = totalPrice;
-
-            var str = new StringBuilder();
-            for (var i = 0; i < cartElements.Count; i++)
-                if (cartElements.Count == 1)
-                    str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
-                else if (i == cartElements.Count - 1)
-                    str.Append(cartElements[i].Id + ":" + cartElements[i].Count);
-                else
-                    str.Append(cartElements[i].Id + ":" + cartElements[i].Count + ",");
-            Session["cart"] = str.ToString();
+            
+            Session["cart"] = Parser.ParseCartElements(cartElements);
             return View();
         }
 
