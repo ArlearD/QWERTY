@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Npgsql;
-using QWERTYShop.Helpers;
+using QWERTYFSharp.Helpers;
 using QWERTYShop.Models;
 
 namespace QWERTYShop.Controllers
@@ -198,7 +198,7 @@ namespace QWERTYShop.Controllers
             {
                 if (accordances.Check[i])
                 {
-                    var ids = accordances.GetIds(i);
+                    var ids = GetCategoryIds(accordances, i);
                     var property = accordances.GetProperty(i);
                     if (!structure.ContainsKey(property))
                     {
@@ -230,6 +230,25 @@ namespace QWERTYShop.Controllers
             result = result.Remove(result.Length - 5, 5);
             result += ")";
             return result;
+        }
+
+        public List<long> GetCategoryIds(QWERTYFSharp.Helpers.Accordances accs, int i) //получает лист id(в cards) по выборке
+        {
+            List<long> list = new List<long>();
+            string specialName = new ManagmentController().GetSpecialNameUsingType(accs.Category);
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(Connection.ConnectionString))
+            {
+                connection.Open();
+                var cmd = new NpgsqlCommand($"select id from {specialName} where \"{accs.GetProperty(i)}\" = '{accs.GetValue(i)}' ", connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    list.Add(reader.GetInt64(0));
+                }
+            }
+
+            return list;
         }
     }
 }

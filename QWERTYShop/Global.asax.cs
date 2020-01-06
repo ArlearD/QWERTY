@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Npgsql;
+using QWERTYShop.Controllers;
 using QWERTYShop.Models;
 using StackExchange.Profiling;
 
@@ -38,7 +39,7 @@ namespace QWERTYShop
         {
             Session["Categories"] = new List<CategoryModels>();
             var categories = new List<CategoryModels>();
-            using (var connection = new NpgsqlConnection("Server = newinstance.cflxuowbdowj.us-east-1.rds.amazonaws.com; Port = 5432; Database = postgres; User Id = postgres; Password = 1234QWER"))
+            using (var connection = new NpgsqlConnection(Connection.ConnectionString))
             {
                 connection.Open();
                 using (var command = new NpgsqlCommand("select distinct type from cards;", connection))
