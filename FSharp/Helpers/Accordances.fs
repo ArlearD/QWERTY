@@ -2,6 +2,8 @@
 
 open System.Collections.Generic
 open System
+open System.IO
+open System.Web.Hosting
 
 type Accordances(check:List<bool>, dict:Dictionary<string, Dictionary<int, string>>, category:string) =
     let imperative = new QWERTYFSharp.ImperativeBuilder()
@@ -24,3 +26,16 @@ type Accordances(check:List<bool>, dict:Dictionary<string, Dictionary<int, strin
                 then return value.Value
         raise (Exception("Неверный i"))
     }
+
+type Remover() =
+    static member RemoveImage (id : int) =
+        let path = HostingEnvironment.MapPath("~/Images/")
+
+        if File.Exists(path + id.ToString() + ".jpg") 
+        then File.Delete(path + id.ToString() + ".jpg")
+
+        elif File.Exists(path + id.ToString() + ".jpeg") 
+        then File.Delete(path + id.ToString() + "jpeg")
+
+        elif File.Exists(path + id.ToString() + ".png") 
+        then File.Delete(path + id.ToString() + ".png")
