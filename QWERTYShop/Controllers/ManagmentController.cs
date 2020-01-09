@@ -195,7 +195,7 @@ namespace QWERTYShop.Controllers
             if (model.Name != null) currentModel = model.Name;
             if (currentModel == "Remove last")
             {
-                long id = 0;
+                int id = 0;
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                 {
                     connection.Open();
@@ -205,7 +205,7 @@ namespace QWERTYShop.Controllers
                     {
                         if (reader.HasRows && !reader.IsDBNull(0))
                         {
-                            id = reader.GetInt64(0);
+                            id = reader.GetInt32(0);
                         }
                     }
                     connection.Close();
@@ -213,7 +213,7 @@ namespace QWERTYShop.Controllers
 
                 if (id != 0)
                 {
-                    RemoveImage(id);
+                    QWERTYFSharp.Helpers.Remover.RemoveImage(id);
                 }
                 using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
                 {

@@ -4,6 +4,8 @@ open System.Collections.Generic
 open System
 open System.IO
 open System.Web.Hosting
+open System.Web
+open System.Linq
 
 type Accordances(check:List<bool>, dict:Dictionary<string, Dictionary<int, string>>, category:string) =
     let imperative = new QWERTYFSharp.ImperativeBuilder()
@@ -39,3 +41,10 @@ type Remover() =
 
         elif File.Exists(path + id.ToString() + ".png") 
         then File.Delete(path + id.ToString() + ".png")
+
+type Uploader() =
+    static member UploadImagePath (upload : HttpPostedFileBase, id : int) =
+        let extension = System.IO.Path.GetFileName(upload.FileName).Split('.').Last()
+
+        let fileName = "~/Images/" + id.ToString() + "." + extension
+        fileName 
