@@ -29,8 +29,10 @@ type Accordances(check:List<bool>, dict:Dictionary<string, Dictionary<int, strin
         raise (Exception("Неверный i"))
     }
 
+    //Image Remover
+
 type Remover() =
-    static member RemoveImage (id : int) =
+    static member RemoveImage (id : int64) =
         let path = HostingEnvironment.MapPath("~/Images/")
 
         if File.Exists(path + id.ToString() + ".jpg") 
@@ -42,9 +44,12 @@ type Remover() =
         elif File.Exists(path + id.ToString() + ".png") 
         then File.Delete(path + id.ToString() + ".png")
 
+     //Image Uploader
+
 type Uploader() =
-    static member UploadImagePath (upload : HttpPostedFileBase, id : int) =
+    static member UploadImage (upload : HttpPostedFileBase, id : int64, server : HttpServerUtilityBase) =
         let extension = System.IO.Path.GetFileName(upload.FileName).Split('.').Last()
 
         let fileName = "~/Images/" + id.ToString() + "." + extension
-        fileName 
+
+        upload.SaveAs(server.MapPath(fileName))

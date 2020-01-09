@@ -725,7 +725,7 @@ namespace QWERTYShop.Controllers
             HttpPostedFileBase upload = cardsModels.Upload;
             if (upload != null)
             {
-                UploadImage(upload, cardsModels.Id);
+                QWERTYFSharp.Helpers.Uploader.UploadImage(upload, cardsModels.Id, Server);
             }
 
             Session["Type"] = cardsModels.Type;

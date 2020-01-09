@@ -267,7 +267,6 @@ C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\bin\Debug\ru\FSharp.Core.resourc
 C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\bin\Debug\tr\FSharp.Core.resources.dll
 C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\bin\Debug\zh-Hans\FSharp.Core.resources.dll
 C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\bin\Debug\zh-Hant\FSharp.Core.resources.dll
-C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\obj\Debug\QWERTYFSharp.fsprojAssemblyReference.cache
 C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\obj\Debug\QWERTYFSharp.fsproj.CopyComplete
 C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\obj\Debug\FSharp.dll
 C:\Users\Arleard\Documents\GitHub\QWERTY\FSharp\obj\Debug\FSharp.pdb
