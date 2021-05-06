@@ -470,12 +470,12 @@ namespace QWERTYShop.Controllers
             else if (Session["Delivery"].ToString() == "Доставка до квартиры" && Session["Paid"] == "true")
             {
                 information = $"Выбранный Вами тип получения товара - доставка до квартиры. Ожидайте нашего курьера " +
-                              $"{Session["DeliveryDate"].ToString().Split(' ')[0]}, время доставки: {Session["DeliveryTime"].ToString()}";
+                              $"{Session["DeliveryDate"].ToString().Split(' ')[0]}, время доставки: {Session["DeliveryTime"]}";
             }
             else
             {
                 information = $"Выбранный Вами тип получения товара - доставка до квартиры. Ожидайте нашего курьера" +
-                              $"{Session["DeliveryDate"].ToString().Split(' ')[0]}, время доставки:{Session["DeliveryTime"].ToString()}" +
+                              $"{Session["DeliveryDate"].ToString().Split(' ')[0]}, время доставки:{Session["DeliveryTime"]}" +
                               $" Напоминаем, что сумма Вашего заказа составляет {Session["Price"]}";
             }
 
